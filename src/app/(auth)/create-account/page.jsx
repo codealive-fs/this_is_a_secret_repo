@@ -2,18 +2,26 @@
 import React from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import { useRouter } from 'next/navigation' 
-import GlobalApi from '@/app/_utils/GlobalApi';
 import { toast } from "sonner"
+import GlobalApi from '@/app/_utils/GlobalApi';
+import Link from "next/link"
 
 function CreateAccount() {
 
     const [username, setUsername] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    
     const router = useRouter();
+
+    
+    useEffect(() => {
+        const jwt = sessionStorage.getItem('jwt');
+            if(jwt){
+                router.push('/')
+                }
+            }, [])
 
     const onCreateAccount = () => {
         GlobalApi.registerUser(username, email, password).then(resp => {
@@ -41,6 +49,11 @@ function CreateAccount() {
                 <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' />
                 <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
                 <Button onClick={() => onCreateAccount()} >Submit</Button>
+                <p>Already have an Account 
+                <Link href={'/sign-in'} className="text-blue-700">
+                    Click here to Sign In
+                </Link>
+                </p>                    
             </div>
         </div>
 </div>

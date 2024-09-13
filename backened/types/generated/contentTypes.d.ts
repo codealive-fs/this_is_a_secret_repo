@@ -362,12 +362,47 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   };
 }
 
+export interface ApiCompanyCompany extends Schema.CollectionType {
+  collectionName: 'companies';
+  info: {
+    singularName: 'company';
+    pluralName: 'companies';
+    displayName: 'company';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required & Attribute.Unique;
+    city: Attribute.String;
+    website: Attribute.String;
+    slug: Attribute.UID<'api::company.company', 'name'>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::company.company',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::company.company',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiJobJob extends Schema.CollectionType {
   collectionName: 'jobs';
   info: {
     singularName: 'job';
     pluralName: 'jobs';
     displayName: 'job';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -375,6 +410,25 @@ export interface ApiJobJob extends Schema.CollectionType {
   attributes: {
     title: Attribute.String;
     company: Attribute.String;
+    salary: Attribute.Integer & Attribute.DefaultTo<0>;
+    expiary_date: Attribute.Date;
+    location: Attribute.String;
+    jobType: Attribute.Enumeration<
+      ['Full-time', 'Part-time', 'Permanent', 'Contractual']
+    >;
+    jobDescription: Attribute.Blocks;
+    education: Attribute.Enumeration<
+      [
+        'Bechlors in CS/SE',
+        'Bechlors in Business Administration',
+        'Masters in Busniess Administration',
+        'Bechlors in Project Management'
+      ]
+    >;
+    remoteOk: Attribute.Boolean;
+    featuredJob: Attribute.Boolean;
+    datePosted: Attribute.DateTime;
+    slug: Attribute.UID<'api::job.job', 'title'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -821,6 +875,7 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission;
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
+      'api::company.company': ApiCompanyCompany;
       'api::job.job': ApiJobJob;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;

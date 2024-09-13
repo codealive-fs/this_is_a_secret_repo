@@ -13,7 +13,6 @@ export default function JobRow({ title, company }) {
                 <div className="font-bold">{title}</div>
                 {/* <div className="text-gray-500 text-xs">{location} &middot; {jobType}</div> */}
             </div>
-            {/* <div className="content-end text-gray-500 text-xs">{postedDate}</div> */}
         </div>
     )
 }

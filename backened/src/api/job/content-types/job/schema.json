@@ -4,7 +4,8 @@
   "info": {
     "singularName": "job",
     "pluralName": "jobs",
-    "displayName": "job"
+    "displayName": "job",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -12,10 +13,57 @@
   "pluginOptions": {},
   "attributes": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "unique": false,
+      "required": false
     },
     "company": {
       "type": "string"
+    },
+    "salary": {
+      "type": "integer",
+      "default": 0
+    },
+    "expiary_date": {
+      "type": "date"
+    },
+    "location": {
+      "type": "string"
+    },
+    "jobType": {
+      "type": "enumeration",
+      "enum": [
+        "Full-time",
+        "Part-time",
+        "Permanent",
+        "Contractual"
+      ]
+    },
+    "jobDescription": {
+      "type": "blocks"
+    },
+    "education": {
+      "type": "enumeration",
+      "enum": [
+        "Bechlors in CS/SE",
+        "Bechlors in Business Administration",
+        "Masters in Busniess Administration",
+        "Bechlors in Project Management"
+      ]
+    },
+    "remoteOk": {
+      "type": "boolean"
+    },
+    "featuredJob": {
+      "type": "boolean"
+    },
+    "datePosted": {
+      "type": "datetime"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": false
     }
   }
 }
