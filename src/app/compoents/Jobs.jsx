@@ -4,21 +4,22 @@ import GlobalAPI from "../_utils/GlobalAPI"
 import JobRow from "./JobRow"
 import { Button } from "@/components/ui/button"
 
-export default function Jobs({jobList}){
+export default function Jobs({ jobList }){
     
-const [jobs, setJobs] = useState([]);
-useEffect(() => {
-    getJobsList()
-}, [])
+// const [jobs, setJobs] = useState([]);
+// useEffect(() => {
+//     getJobsList()
+// }, [])
 
-const getJobsList = () => {
-    GlobalAPI.getJobs().then(resp => {
-        setJobs(resp.data)
-        console.log(resp);
-        
-    })
-};
+// const getJobsList = () => {
+//     GlobalAPI.getJobs().then(resp => {
+//         setJobs(resp.data)
+//         console.log(resp);
+//     })
+// };
     
+const jobs = jobList?.data || []; // Check if jobList exists and get the data array
+
 return (
     <div className="bg-gray-500 py-4 rounded-lg">
         <div className="container ">
@@ -44,24 +45,4 @@ return (
     </div>
     </div>
   );
-    // return(
-    //     <div className="bg-gray-500 py-4 rounded-lg">
-    //         <div className="container ">
-    //             <h3 className="font-bold mb-4 ">Recent Jobs</h3>
-    //                 <div className="flex flex-col gap-3">
-    //                 {jobs.map((job) => (
-    //                         <JobRow 
-    //                             key={job.id} 
-    //                             title={job?.attributes?.title} 
-    //                             company={job?.attributes?.company} 
-    //                             // location={job.attributes.location} 
-    //                             // jobType={job.attributes.jobType} 
-    //                             // postedDate={job.attributes.postedDate} 
-    //                         />
-    //                     ))}
-    //                 </div>
-    //         </div>
-
-    //     </div>
-    // )
 }
