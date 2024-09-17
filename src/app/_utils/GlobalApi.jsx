@@ -4,15 +4,6 @@ const axiosClient = axios.create({
     baseURL: 'http://localhost:1337/api'
 })
 
-// const getJobs = async (keyword = "") => {
-//     let queryString = `/jobs?populate=*`;
-//     // If a keyword is provided, add it to the query string
-//     if (keyword) {
-//       queryString += `&filters[title][$containsi]=${keyword}`;
-//     }
-//     const resp = await axiosClient.get(queryString);
-//     return resp.data;
-//   };
 
 const getJobs = () => axiosClient.get("/jobs?populate=*").then(resp => {
     console.log("++++++++++++", resp.data);
@@ -34,3 +25,21 @@ export default{
     registerUser,
     signIn
 };
+
+
+
+
+
+
+
+
+
+// const getJobs = async (keyword = "") => {
+//     let queryString = `/jobs?populate=*`;
+//     // If a keyword is provided, add it to the query string
+//     if (keyword) {
+//       queryString += `&filters[title][$containsi]=${keyword}`;
+//     }
+//     const resp = await axiosClient.get(queryString);
+//     return resp.data;
+//   };

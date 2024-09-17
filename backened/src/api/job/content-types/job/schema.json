@@ -33,8 +33,8 @@
     "jobType": {
       "type": "enumeration",
       "enum": [
-        "Full-time",
-        "Part-time",
+        "Full-Time",
+        "Part-Time",
         "Permanent",
         "Contractual"
       ]
@@ -45,6 +45,7 @@
     "education": {
       "type": "enumeration",
       "enum": [
+        "BSc. 2 Year Associate Degree",
         "Bechlors in CS/SE",
         "Bechlors in Business Administration",
         "Masters in Busniess Administration",
@@ -64,6 +65,9 @@
       "type": "uid",
       "targetField": "title",
       "required": false
+    },
+    "experiance": {
+      "type": "integer"
     }
   }
 }

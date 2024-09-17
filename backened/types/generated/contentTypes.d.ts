@@ -414,11 +414,12 @@ export interface ApiJobJob extends Schema.CollectionType {
     expiary_date: Attribute.Date;
     location: Attribute.String;
     jobType: Attribute.Enumeration<
-      ['Full-time', 'Part-time', 'Permanent', 'Contractual']
+      ['Full-Time', 'Part-Time', 'Permanent', 'Contractual']
     >;
     jobDescription: Attribute.Blocks;
     education: Attribute.Enumeration<
       [
+        'BSc. 2 Year Associate Degree',
         'Bechlors in CS/SE',
         'Bechlors in Business Administration',
         'Masters in Busniess Administration',
@@ -429,6 +430,7 @@ export interface ApiJobJob extends Schema.CollectionType {
     featuredJob: Attribute.Boolean;
     datePosted: Attribute.DateTime;
     slug: Attribute.UID<'api::job.job', 'title'>;
+    experiance: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
