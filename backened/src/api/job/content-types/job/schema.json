@@ -46,10 +46,10 @@
       "type": "enumeration",
       "enum": [
         "BSc. 2 Year Associate Degree",
-        "Bechlors in CS/SE",
-        "Bechlors in Business Administration",
+        "Bachelors in CS/SE",
+        "Bachelors in Business Administration",
         "Masters in Busniess Administration",
-        "Bechlors in Project Management"
+        "Bachelors in Project Management"
       ]
     },
     "remoteOk": {
@@ -66,8 +66,30 @@
       "targetField": "title",
       "required": false
     },
-    "experiance": {
-      "type": "integer"
+    "experience": {
+      "type": "enumeration",
+      "enum": [
+        "Junior",
+        "Mid-Level",
+        "Senior"
+      ]
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "jobs"
+    },
+    "firm": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::company.company",
+      "inversedBy": "jobs"
+    },
+    "job_applications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::job-application.job-application"
     }
   }
 }

@@ -1,64 +1,20 @@
-export default function JobRow({ title, company }) {
-    return (
-        <div className="bg-white py-4 px-2 rounded-md shadow-sm flex">
-            <div>
-                <img 
-                    src="https://img.icons8.com/?size=100&id=118489&format=png&color=000000" 
-                    alt="" 
-                    className="size-12 mr-2"
-                />
-            </div>
-            <div className="grow">
-                <div className="font-sm">{company}</div>
-                <div className="font-bold">{title}</div>
-                {/* <div className="text-gray-500 text-xs">{location} &middot; {jobType}</div> */}
-            </div>
-        </div>
-    )
+
+"use client";
+import { Button } from "@/components/ui/button";
+
+export function JobRow({ job }) {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h3 className="text-xl font-bold">{job.attributes.title}</h3>
+      <p className="text-gray-700">
+        {job.attributes.company} - {job.attributes.location} - {job.attributes.jobType}
+      </p>
+      <p className="text-gray-700">{job.attributes.description}</p>
+      <p className="text-red-500 font-bold">
+        Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
+      </p>
+      <p className="text-gray-700">{job.attributes.salary}</p>
+      <Button className="mt-4">Apply Now</Button>
+    </div>
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export default function JobRow(){
-//     return(
-//         <div className="bg-white py-4 px-2 rounded-md shadow-sm flex  ">
-//             <div>
-//                 <img 
-//                     src="https://img.icons8.com/?size=100&id=118489&format=png&color=000000" alt="" srcset="" 
-//                     className="size-12 mr-2"
-//                     />
-//             </div>
-//             <div className="grow">
-//                 <div className="font-sm">Facebook</div>
-//                 <div className="font-bold">Product designer</div>
-//                 <div className="text-gray-500 text-xs">Remote &middot; New York, US &middot; Full-time</div>
-//             </div>
-//             <div className="content-end text-gray-500 text-xs">2 weeks ago</div>
-//         </div>
-//     )
-// }

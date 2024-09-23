@@ -375,9 +375,13 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
   };
   attributes: {
     name: Attribute.String & Attribute.Required & Attribute.Unique;
-    city: Attribute.String;
-    website: Attribute.String;
+    address: Attribute.String;
     slug: Attribute.UID<'api::company.company', 'name'>;
+    jobs: Attribute.Relation<
+      'api::company.company',
+      'oneToMany',
+      'api::job.job'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -420,23 +424,75 @@ export interface ApiJobJob extends Schema.CollectionType {
     education: Attribute.Enumeration<
       [
         'BSc. 2 Year Associate Degree',
-        'Bechlors in CS/SE',
-        'Bechlors in Business Administration',
+        'Bachelors in CS/SE',
+        'Bachelors in Business Administration',
         'Masters in Busniess Administration',
-        'Bechlors in Project Management'
+        'Bachelors in Project Management'
       ]
     >;
     remoteOk: Attribute.Boolean;
     featuredJob: Attribute.Boolean;
     datePosted: Attribute.DateTime;
     slug: Attribute.UID<'api::job.job', 'title'>;
-    experiance: Attribute.Integer;
+    experience: Attribute.Enumeration<['Junior', 'Mid-Level', 'Senior']>;
+    user: Attribute.Relation<
+      'api::job.job',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    firm: Attribute.Relation<
+      'api::job.job',
+      'manyToOne',
+      'api::company.company'
+    >;
+    job_applications: Attribute.Relation<
+      'api::job.job',
+      'oneToMany',
+      'api::job-application.job-application'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::job.job', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::job.job', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiJobApplicationJobApplication extends Schema.CollectionType {
+  collectionName: 'job_applications';
+  info: {
+    singularName: 'job-application';
+    pluralName: 'job-applications';
+    displayName: 'job-application';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    applicationDate: Attribute.Date;
+    status: Attribute.Enumeration<['Pending', 'Accepted', 'Rejected']>;
+    users_permissions_users: Attribute.Relation<
+      'api::job-application.job-application',
+      'oneToMany',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::job-application.job-application',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::job-application.job-application',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -821,7 +877,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -849,6 +904,17 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'plugin::users-permissions.user',
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    jobs: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::job.job'
+    >;
+    cv: Attribute.Media<'files'>;
+    job_application: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'manyToOne',
+      'api::job-application.job-application'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -879,6 +945,7 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::company.company': ApiCompanyCompany;
       'api::job.job': ApiJobJob;
+      'api::job-application.job-application': ApiJobApplicationJobApplication;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;

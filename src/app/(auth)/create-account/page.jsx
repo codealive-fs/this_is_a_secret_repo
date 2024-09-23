@@ -46,7 +46,7 @@ function CreateAccount() {
                 <h2 className='text-gray-500 text-sm'>Enter your Email and Password to Create an account</h2>
             <div className='flex flex-col w-full gap-5 mt-7'>
                 <Input onChange={(e) => setUsername(e.target.value)} type="text" placeholder='Username' />
-                <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' />
+                <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' /> 
                 <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
                 <Button onClick={() => onCreateAccount()} >Submit</Button>
                 <p>Already have an Account 

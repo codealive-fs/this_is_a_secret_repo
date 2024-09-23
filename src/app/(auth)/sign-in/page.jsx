@@ -28,6 +28,12 @@ function SignIn() {
       sessionStorage.setItem("user", JSON.stringify(resp?.data?.user))
       sessionStorage.setItem("jwt", resp?.data?.jwt);
       toast("Login Successfully!");
+      
+      // Dispatch custom event after successful login
+      const event = new Event('loginSuccess');
+      window.dispatchEvent(event);
+      
+      
       router.push('/');  
     }, (e)=>{
       toast("Error while Login In!");

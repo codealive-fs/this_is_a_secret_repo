@@ -3,7 +3,8 @@ import "./globals.css";
 import Link from 'next/link';
 import Header from "./compoents/Header"
 import { Toaster } from "@/components/ui/sonner"
-
+import { AuthProvider } from "./context/AuthContext";
+import { JobsProvider } from "./context/JobsContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -15,6 +16,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <AuthProvider>
+          <JobsProvider>
           <div className="container">
               <Header />
           </div>
@@ -23,6 +26,8 @@ export default function RootLayout({ children }) {
               <footer className="container p-6 text-gray-500">
                   Job Board &copy; 2024 - All rights reserved
               </footer>
+              </JobsProvider>
+        </AuthProvider>
         </body>
     </html>
   );

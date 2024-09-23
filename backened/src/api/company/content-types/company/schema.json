@@ -17,15 +17,18 @@
       "required": true,
       "unique": true
     },
-    "city": {
-      "type": "string"
-    },
-    "website": {
+    "address": {
       "type": "string"
     },
     "slug": {
       "type": "uid",
       "targetField": "name"
+    },
+    "jobs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::job.job",
+      "mappedBy": "firm"
     }
   }
 }

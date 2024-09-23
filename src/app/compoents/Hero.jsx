@@ -1,21 +1,29 @@
 "use client"
 import Sidebar from './Sidebar';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { JobsContext } from "../context/JobsContext";
 
-export default function Hero({ jobList }) {
+export default function Hero() {
+  
+  // const [jobs, setJobs] = useState(jobList || []);
+  const { jobs: jobList, loading } = useContext(JobsContext);
   const [jobs, setJobs] = useState(jobList || []);
+
   const [filters, setFilters] = useState({
     fullTime: false,
     partTime: false,
     permanent: false,
     contractual: false,
-    ////////////////////////////////
     educationBScAssociate: false,
     educationBachelorsCS: false,
     educationBachelorsBusiness: false,
     educationMastersBusiness: false,
-    educationBachelorsProjectMgmt: false
-    ////////////////////////////////////////
+    educationBachelorsProjectMgmt: false, 
+    experienceJunior: false,
+    experienceMidLevel: false,
+    experienceSenior: false,
+    minSalary: "",
+    maxSalary: "",
   });
   const [searchQuery, setSearchQuery] = useState({ keyword: "", location: "" });
 
@@ -27,6 +35,7 @@ export default function Hero({ jobList }) {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [filterName]: !prevFilters[filterName],
+      // [filterName]: value !== undefined ? value : !prevFilters[filterName],
     }));
   };
 
@@ -39,6 +48,8 @@ export default function Hero({ jobList }) {
   };
 
   const applyFilters = () => {
+    // console.log("Job list before filtering:", jobList);
+    // console.log("Current filters:", filters); 
     let filteredJobs = jobList;
 
     // Apply filter conditions
@@ -54,23 +65,26 @@ export default function Hero({ jobList }) {
     if (filters.contractual) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.jobType === "Contractual");
     }
-    // Apply education filters
     if (filters.educationBScAssociate) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.education === "BSc. 2 Year Associate Degree");
+      console.log("Filtered by BSc. 2 Year Associate Degree:", filteredJobs);
     }
     if (filters.educationBachelorsCS) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.education === "Bachelors in CS/SE");
+      console.log("Filtered by Bachelors in CS/SE:", filteredJobs);
     }
     if (filters.educationBachelorsBusiness) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.education === "Bachelors in Business Administration");
+      console.log("Filtered by Bachelors in Business Administration", filteredJobs);
     }
     if (filters.educationMastersBusiness) {
-      filteredJobs = filteredJobs.filter((job) => job.attributes.education === "Masters in Business Administration");
+      filteredJobs = filteredJobs.filter((job) => job.attributes.education === "Masters in Busniess Administration");
+      console.log("Filtered by Masters in Business Administration", filteredJobs);
     }
     if (filters.educationBachelorsProjectMgmt) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.education === "Bachelors in Project Management");
+      console.log("Filtered by Bachelors in Project Management", filteredJobs);
     }
-
     // Apply search query
     const { keyword, location } = searchQuery;
     if (keyword) {
@@ -83,7 +97,28 @@ export default function Hero({ jobList }) {
         job.attributes.location.toLowerCase().includes(location.toLowerCase())
       );
     }
-
+    // Apply experience filters
+    if (filters.experienceJunior) {
+      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Junior");
+    }
+    if (filters.experienceMidLevel) {
+      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Mid-Level");
+    }
+    if (filters.experienceSenior) {
+      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Senior");
+    }
+      // Apply Salary Range Filter
+    if (filters.minSalary) {
+      filteredJobs = filteredJobs.filter((job) =>
+        parseInt(job.attributes.salary) >= parseInt(filters.minSalary)
+      );
+    }
+    if (filters.maxSalary) {
+      filteredJobs = filteredJobs.filter((job) =>
+        parseInt(job.attributes.salary) <= parseInt(filters.maxSalary)
+      );
+    }
+    console.log("Filtered jobs:", filteredJobs); // Log filtered jobs
     setJobs(filteredJobs);
   };
 
@@ -94,7 +129,7 @@ export default function Hero({ jobList }) {
   };
 
   return (
-    <section className="py-12">
+    <section className="py-8">
       <h1 className="text-4xl text-center font-bold mb-8">
         Find your next <br /> dream job
       </h1>
