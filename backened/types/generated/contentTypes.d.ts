@@ -472,13 +472,14 @@ export interface ApiJobApplicationJobApplication extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
-    applicationDate: Attribute.Date;
-    status: Attribute.Enumeration<['Pending', 'Accepted', 'Rejected']>;
-    users_permissions_users: Attribute.Relation<
+    status: Attribute.Enumeration<['applied']>;
+    users_permissions_user: Attribute.Relation<
       'api::job-application.job-application',
-      'oneToMany',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
+    job: Attribute.Integer;
+    user: Attribute.Integer;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -911,9 +912,9 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::job.job'
     >;
     cv: Attribute.Media<'files'>;
-    job_application: Attribute.Relation<
+    job_applications: Attribute.Relation<
       'plugin::users-permissions.user',
-      'manyToOne',
+      'oneToMany',
       'api::job-application.job-application'
     >;
     createdAt: Attribute.DateTime;

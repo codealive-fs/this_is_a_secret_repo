@@ -22,6 +22,144 @@ const signIn = (email, password) => axiosClient.post("/auth/local", {
 });
 
 
+const updateUserProfile = async (userId, updatedData, token) => {
+  console.log("updatedData", updatedData);
+
+  try {
+    // Prepare data for updating user profile
+    const payload = {
+      username: updatedData.username,
+      email: updatedData.email,
+      ...(updatedData.cv && { cv: updatedData.cv })  // Attach CV ID if present
+    };
+
+    const resp = await axiosClient.put(`/users/${userId}`, payload, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    console.log("User profile updated successfully:", resp.data);
+    return resp.data;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
+};
+
+
+const uploadCV = async (file, token) => {
+  try {
+    const formData = new FormData();
+    formData.append('files', file);  // 'files' is the key for uploading multiple files
+    console.log("file", file);
+    
+    const response = await axiosClient.post('/upload', formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      },
+    });
+
+    console.log("CV uploaded successfully:", response.data);
+    return response.data;  // This will return an array of uploaded files, each with an ID
+  } catch (error) {
+    console.error("Error uploading CV:", error);
+    throw error;
+  }
+};
+
+const applyForJob = async (jobId, userId, token) => {
+  try {
+  
+    // Log jobId and userId to check if they are being passed correctly
+    console.log("Job ID:", jobId);
+    console.log("User ID:", userId);
+    console.log("Token:", token);
+  
+    const response = await axiosClient.post('/job-applications', {
+      data: {
+        job: jobId,
+        user: userId,
+        status: 'applied'
+      }
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log("Job application successful:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error applying for job:", error);
+    throw error;
+  }
+};
+
+
+const getAppliedJobs = async (userId, token) => {
+  try {
+    const response = await axiosClient.get(`/job-applications?filters[user][id][$eq]=${userId}&populate=job`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log("Fetched applied jobs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching applied jobs:", error);
+    throw error;
+  }
+};
+
+
+
+export default{
+  getJobs,
+  registerUser,
+  signIn,
+  uploadCV,
+  getAppliedJobs,
+  applyForJob,
+  updateUserProfile,
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Update user profile
+// const updateUserProfile = async (userId, updatedData, token) => {
+//     try {
+  //       const resp = await axiosClient.put(`/users/${userId}`, updatedData, {
+//         headers: {
+  //           Authorization: `Bearer ${token}`,
+//         },
+//       });
+//       console.log("User profile updated successfully:", resp.data);
+//       return resp.data;
+//     } catch (error) {
+  //       console.error("Error updating user profile:", error);
+//       throw error;
+//     }
+//   };
+
+
+
+
+
+
 // Update user profile including CV upload
 // const updateUserProfile = async (userId, updatedData, token) => {
 //   console.log("updatedData", updatedData);
@@ -61,85 +199,6 @@ const signIn = (email, password) => axiosClient.post("/auth/local", {
 // };
 
 // Upload file to Strapi
-
-const updateUserProfile = async (userId, updatedData, token) => {
-  console.log("updatedData", updatedData);
-
-  try {
-    // Prepare data for updating user profile
-    const payload = {
-      username: updatedData.username,
-      email: updatedData.email,
-      ...(updatedData.cv && { cv: updatedData.cv })  // Attach CV ID if present
-    };
-
-    const resp = await axiosClient.put(`/users/${userId}`, payload, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-    });
-
-    console.log("User profile updated successfully:", resp.data);
-    return resp.data;
-  } catch (error) {
-    console.error("Error updating user profile:", error);
-    throw error;
-  }
-};
-
-
-const uploadCV = async (file, token) => {
-  try {
-    const formData = new FormData();
-    formData.append('files', file);  // 'files' is the key for uploading multiple files
-
-    const response = await axiosClient.post('/upload', formData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      },
-    });
-
-    console.log("CV uploaded successfully:", response.data);
-    return response.data;  // This will return an array of uploaded files, each with an ID
-  } catch (error) {
-    console.error("Error uploading CV:", error);
-    throw error;
-  }
-};
-
-// Update user profile
-// const updateUserProfile = async (userId, updatedData, token) => {
-//     try {
-//       const resp = await axiosClient.put(`/users/${userId}`, updatedData, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-//       console.log("User profile updated successfully:", resp.data);
-//       return resp.data;
-//     } catch (error) {
-//       console.error("Error updating user profile:", error);
-//       throw error;
-//     }
-//   };
-  
-
-export default{
-    getJobs,
-    registerUser,
-    signIn,
-    uploadCV,
-    updateUserProfile,
-};
-
-
-
-
-
-
-
-
 
 // const getJobs = async (keyword = "") => {
 //     let queryString = `/jobs?populate=*`;

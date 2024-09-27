@@ -1,12 +1,15 @@
 "use client"
 import Sidebar from './Sidebar';
 import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext"; // Import AuthContext to get user and token
 import { JobsContext } from "../context/JobsContext";
+import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
 
 export default function Hero() {
   
   // const [jobs, setJobs] = useState(jobList || []);
   const { jobs: jobList, loading } = useContext(JobsContext);
+  const { user, token } = useContext(AuthContext); // Get logged-in user and token
   const [jobs, setJobs] = useState(jobList || []);
 
   const [filters, setFilters] = useState({
@@ -30,6 +33,23 @@ export default function Hero() {
   useEffect(() => {
     applyFilters();
   }, [filters, searchQuery, jobList]);
+
+  const applyForJob = async (jobId) => {
+    if (!user || !token) {
+      alert("You must be logged in to apply.");
+      return;
+    }
+
+    try {
+      const response = await GlobalAPI.applyForJob(jobId, user.id, token);
+      console.log("userId", user.id, "jobId", jobId);
+      alert("Successfully applied to the job!");
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      alert("Failed to apply for the job.");
+    }
+  };
+
 
   const handleFilterChange = (filterName) => {
     setFilters((prevFilters) => ({
@@ -137,44 +157,125 @@ export default function Hero() {
       <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Sidebar filters={filters} onFilterChange={handleFilterChange} />
         <div className="lg:col-span-2">
+          {/* Search form */}
           <form onSubmit={handleSearch} className="flex gap-2 mb-6 max-w-md mx-auto">
-            <input
-              name="keyword"
-              type="search"
-              className="border border-gray-400 rounded-md px-2 py-2 w-full"
-              placeholder="Job title or keyword.."
-              value={searchQuery.keyword}
-              onChange={handleSearchChange}
-            />
-            <input
-              name="location"
-              type="search"
-              className="border border-gray-400 rounded-md px-2 py-2 w-full"
-              placeholder="Location.."
-              value={searchQuery.location}
-              onChange={handleSearchChange}
-            />
-            <button className="bg-blue-600 text-white rounded-md px-4 py-2" type="submit">
-              Search
-            </button>
-          </form>
-
+             <input
+               name="keyword"
+               type="search"
+               className="border border-gray-400 rounded-md px-2 py-2 w-full"
+               placeholder="Job title or keyword.."
+               value={searchQuery.keyword}
+               onChange={handleSearchChange}
+             />
+             <input
+               name="location"
+               type="search"
+               className="border border-gray-400 rounded-md px-2 py-2 w-full"
+               placeholder="Location.."
+               value={searchQuery.location}
+               onChange={handleSearchChange}
+               />
+               <button className="bg-blue-600 text-white rounded-md px-4 py-2" type="submit">
+                 Search
+               </button>
+             </form>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {jobs.map((job) => (
-              <div key={job.id} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold">{job.attributes.title}</h3>
-                <p className="text-gray-700">{job.attributes.location}</p>
-                <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-                  Apply Now
-                </button>
-              </div>
-            ))}
+            {jobs.map((job) => {
+              const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
+
+              return (
+                <div key={job.id} className="bg-white p-6 rounded-lg shadow-md">
+                  <h3 className="text-xl font-bold">{job.attributes.title}</h3>
+                  <p className="text-gray-700">
+                    {job.attributes.company} - {job.attributes.location} - {job.attributes.jobType}
+                  </p>
+                  <p className="text-gray-700">{job.attributes.description}</p>
+                  <p className="text-red-500 font-bold">
+                    Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-700">{job.attributes.salary}</p>
+
+                  <button
+                    className={`mt-4 px-4 py-2 rounded ${
+                      deadlinePassed ? "bg-gray-400" : "bg-blue-600 text-white"
+                    }`}
+                    onClick={() => {
+                      console.log("Button clicked", job.id, user.id);
+                      applyForJob(job.id, user.id, token)
+
+                    }}
+                    disabled={deadlinePassed}
+                  >
+                    {deadlinePassed ? "Deadline Passed" : "Apply Now"}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
     </section>
   );
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // return (
+  //   <section className="py-8">
+  //     <h1 className="text-4xl text-center font-bold mb-8">
+  //       Find your next <br /> dream job
+  //     </h1>
+
+  //     <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+  //       <Sidebar filters={filters} onFilterChange={handleFilterChange} />
+  //       <div className="lg:col-span-2">
+  //         <form onSubmit={handleSearch} className="flex gap-2 mb-6 max-w-md mx-auto">
+  //           <input
+  //             name="keyword"
+  //             type="search"
+  //             className="border border-gray-400 rounded-md px-2 py-2 w-full"
+  //             placeholder="Job title or keyword.."
+  //             value={searchQuery.keyword}
+  //             onChange={handleSearchChange}
+  //           />
+  //           <input
+  //             name="location"
+  //             type="search"
+  //             className="border border-gray-400 rounded-md px-2 py-2 w-full"
+  //             placeholder="Location.."
+  //             value={searchQuery.location}
+  //             onChange={handleSearchChange}
+  //           />
+  //           <button className="bg-blue-600 text-white rounded-md px-4 py-2" type="submit">
+  //             Search
+  //           </button>
+  //         </form>
+
+  //         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  //           {jobs.map((job) => (
+  //             <div key={job.id} className="bg-white p-6 rounded-lg shadow-md">
+  //               <h3 className="text-xl font-bold">{job.attributes.title}</h3>
+  //               {/* <p className="text-gray-700">{job.attributes.location}</p> */}
+  //               {/* <h3 className="text-xl font-bold">{job.attributes.title}</h3> */}
+  //               <p className="text-gray-700">
+  //                 {job.attributes.company} - {job.attributes.location} - {job.attributes.jobType}
+  //               </p>
+  //               <p className="text-gray-700">{job.attributes.description}</p>
+  //               <p className="text-red-500 font-bold">
+  //                 Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
+  //               </p>
+  //               <p className="text-gray-700">{job.attributes.salary}</p>
+  //               <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+  //                 Apply Now
+  //               </button>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </section>
+  // );
+// }
 
 
 ////////////////////////////////////////////////////////

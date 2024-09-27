@@ -30,6 +30,10 @@ export default function Header() {
               <Link href="/update-profile">
                 <Button>Update Profile</Button>
               </Link>
+      
+              <Link href="/applied-jobs">
+                <Button>Applied Jobs</Button>
+              </Link>
               <Button onClick={logout}>Logout</Button>
             </>
           )}

@@ -12,22 +12,23 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "applicationDate": {
-      "type": "date"
-    },
     "status": {
       "type": "enumeration",
       "enum": [
-        "Pending",
-        "Accepted",
-        "Rejected"
+        "applied"
       ]
     },
-    "users_permissions_users": {
+    "users_permissions_user": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "mappedBy": "job_application"
+      "inversedBy": "job_applications"
+    },
+    "job": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "integer"
     }
   }
 }
