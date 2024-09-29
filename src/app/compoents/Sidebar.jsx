@@ -8,11 +8,23 @@ export default function Sidebar({ filters, onFilterChange }) {
   };
 
   const handleSalaryChange = (event) => {
-    
     const { name, value } = event.target;
-    console.log(`${name}: ${value}`); // This will log the input name and value
-    onFilterChange(name, value); // Pass both the name of the filter and the new value
+  
+    // Convert input value to a number, but if it's empty, use an empty string.
+    const numericValue = value === "" ? "" : parseInt(value, 10);
+  
+    console.log(`${name}: ${numericValue}`); // Log the updated value for debugging
+    onFilterChange(name, numericValue); // Pass the numeric value to the filter
   };
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+  // const handleSalaryChange = (event) => {
+    
+  //   const { name, value } = event.target;
+  //   console.log(`${name}: ${value}`); // This will log the input name and value
+  //   onFilterChange(name, value); // Pass both the name of the filter and the new value
+  // };
 
   return (
     <div className="bg-gray-100 p-6 rounded-lg shadow-md w-[18rem]">

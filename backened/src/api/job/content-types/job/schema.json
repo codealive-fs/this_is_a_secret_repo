@@ -86,10 +86,11 @@
       "target": "api::company.company",
       "inversedBy": "jobs"
     },
-    "job_applications": {
+    "job_application": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::job-application.job-application"
+      "target": "api::job-application.job-application",
+      "mappedBy": "jobs"
     }
   }
 }

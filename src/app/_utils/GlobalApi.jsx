@@ -81,7 +81,9 @@ const applyForJob = async (jobId, userId, token) => {
       data: {
         job: jobId,
         user: userId,
-        status: 'applied'
+        status: 'applied',
+        jobs: {id: jobId}
+
       }
     }, {
       headers: {
@@ -100,13 +102,14 @@ const applyForJob = async (jobId, userId, token) => {
 
 const getAppliedJobs = async (userId, token) => {
   try {
-    const response = await axiosClient.get(`/job-applications?filters[user][id][$eq]=${userId}&populate=job`, {
+    const response = await axiosClient.get(`/job-applications?filters[user][$eq]=${userId}&populate=jobs`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
     console.log("Fetched applied jobs:", response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Error fetching applied jobs:", error);

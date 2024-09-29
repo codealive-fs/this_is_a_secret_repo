@@ -24,11 +24,20 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "job_applications"
     },
+    "user": {
+      "type": "integer"
+    },
     "job": {
       "type": "integer"
     },
-    "user": {
-      "type": "integer"
+    "jobs": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::job.job",
+      "inversedBy": "job_application"
+    },
+    "slug": {
+      "type": "uid"
     }
   }
 }

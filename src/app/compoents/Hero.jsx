@@ -50,14 +50,22 @@ export default function Hero() {
     }
   };
 
-
-  const handleFilterChange = (filterName) => {
+  const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [filterName]: !prevFilters[filterName],
-      // [filterName]: value !== undefined ? value : !prevFilters[filterName],
+      [filterName]: value !== undefined ? value : !prevFilters[filterName],
     }));
   };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+  // const handleFilterChange = (filterName) => {
+  //   setFilters((prevFilters) => ({
+  //     ...prevFilters,
+  //     [filterName]: !prevFilters[filterName],
+  //     // [filterName]: value !== undefined ? value : !prevFilters[filterName],
+  //   }));
+  // };
 
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
