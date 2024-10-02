@@ -1,26 +1,70 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext, useAuthContext } from "../context/AuthContext";
+import GlobalAPI from "../_utils/GlobalAPI"; // Import the API functions
+import { useRouter } from 'next/navigation'; 
+
+
 
 export default function Header() {
-  const { user, logout, loading } = useContext(AuthContext);
 
-  // Display nothing if the app is loading (you can customize this)
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const router = useRouter();
+
+
+  const {token, setToken} = useAuthContext();
+  // const { user, logout, token, loading } = useContext(AuthContext);
+  
+  const [hasCompany, setHasCompany] = useState(false);
+  // console.log("user", user, "token", token);
+  
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  useEffect(() => {
+    // Check if the logged-in user has a registered company
+
+    const checkCompany = async () => {
+
+      if (user && token) {
+        try {
+          const company = await GlobalAPI.getUserCompany(user.id, token);
+          // console.log("COMPANY-------->", company);
+          
+          setHasCompany(!!company); // Set true if company exists, false otherwise
+          
+        } catch (error) {
+          console.error("Error checking company:", error);
+        }
+      }
+    };
+    checkCompany();
+  }, [token]);
+  
+  const logout = () => {
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("jwt");
+        // setUser(null);
+        setToken(null);
+    
+        // Redirect to login page after logging out
+        router.push("/sign-in");
+      };
+    
+  
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
+
     <header>
       <div className="container flex items-center justify-between my-4 mx-auto">
         <Link href={"/"} className="font-bold text-lg">
           Job Board
         </Link>
         <nav className="flex gap-4 px-2 py-3 rounded-md">
-          {!user ? (
+          {!token ? (
             <Link href={"/sign-in"}>
               <Button>Login</Button>
             </Link>
@@ -30,10 +74,22 @@ export default function Header() {
               <Link href="/update-profile">
                 <Button>Update Profile</Button>
               </Link>
-      
+
               <Link href="/applied-jobs">
                 <Button>Applied Jobs</Button>
               </Link>
+
+              {/* Conditionally display the Add Job button */}
+              {hasCompany ? (
+                <Link href="/add-job">
+                  <Button>Add Job</Button>
+                </Link>
+              ) : (
+                <Link href="/register-company">
+                  <Button>Register Company</Button>
+                </Link>
+              )}
+
               <Button onClick={logout}>Logout</Button>
             </>
           )}
@@ -42,6 +98,56 @@ export default function Header() {
     </header>
   );
 }
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// "use client";
+
+// import { useContext } from "react";
+// import Link from "next/link";
+// import { Button } from "@/components/ui/button";
+// import { AuthContext } from "../context/AuthContext";
+
+// export default function Header() {
+//   const { user, logout, loading } = useContext(AuthContext);
+
+//   // Display nothing if the app is loading (you can customize this)
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <header>
+//       <div className="container flex items-center justify-between my-4 mx-auto">
+//         <Link href={"/"} className="font-bold text-lg">
+//           Job Board
+//         </Link>
+//         <nav className="flex gap-4 px-2 py-3 rounded-md">
+//           {!user ? (
+//             <Link href={"/sign-in"}>
+//               <Button>Login</Button>
+//             </Link>
+//           ) : (
+//             <>
+//               <h1>Welcome, {user.username ? user.username : "User"}!</h1>
+//               <Link href="/update-profile">
+//                 <Button>Update Profile</Button>
+//               </Link>
+
+//               <Link href="/applied-jobs">
+//                 <Button>Applied Jobs</Button>
+//               </Link>
+
+//               <Button onClick={logout}>Logout</Button>
+//             </>
+//           )}
+//         </nav>
+//       </div>
+//     </header>
+//   );
+// }
 
 
 

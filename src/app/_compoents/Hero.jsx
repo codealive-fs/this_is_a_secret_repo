@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext"; // Import AuthContext to get user and token
 import { JobsContext } from "../context/JobsContext";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
+import { calculateJobStats } from "../_utils/statsUtils";
 
 export default function Hero() {
   
@@ -11,6 +12,12 @@ export default function Hero() {
   const { jobs: jobList, loading } = useContext(JobsContext);
   const { user, token } = useContext(AuthContext); // Get logged-in user and token
   const [jobs, setJobs] = useState(jobList || []);
+  const [jobStats, setJobStats] = useState({
+    totalJobs: 0,
+    averageSalary: 0,
+    minSalary: 0,
+    maxSalary: 0,
+  });
 
   const [filters, setFilters] = useState({
     fullTime: false,
@@ -148,6 +155,9 @@ export default function Hero() {
     }
     console.log("Filtered jobs:", filteredJobs); // Log filtered jobs
     setJobs(filteredJobs);
+
+    const stats = calculateJobStats(filteredJobs);
+    setJobStats(stats);
   };
 
   const handleSearch = (event) => {
@@ -157,6 +167,7 @@ export default function Hero() {
   };
 
   return (
+    <>
     <section className="py-8">
       <h1 className="text-4xl text-center font-bold mb-8">
         Find your next <br /> dream job
@@ -187,6 +198,12 @@ export default function Hero() {
                  Search
                </button>
              </form>
+             <div className="text-center mb-6">
+                <p>Total Jobs: {jobStats.totalJobs}</p>
+                <p>Average Salary: ${jobStats.averageSalary.toFixed(2)}</p>
+                <p>Min Salary: ${jobStats.minSalary}</p>
+                <p>Max Salary: ${jobStats.maxSalary}</p>
+              </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {jobs.map((job) => {
               const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
@@ -223,6 +240,7 @@ export default function Hero() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 

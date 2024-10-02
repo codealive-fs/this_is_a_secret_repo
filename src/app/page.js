@@ -1,5 +1,5 @@
-import Hero from "@/app/compoents/Hero"
-import Jobs from "@/app/compoents/Jobs"
+import Hero from "@/app/_compoents/Hero"
+import Jobs from "@/app/_compoents/Jobs"
 import GlobalApi from "./_utils/GlobalApi";
 
 export default function Home() {  
