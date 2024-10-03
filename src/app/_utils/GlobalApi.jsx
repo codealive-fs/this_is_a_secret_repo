@@ -117,6 +117,37 @@ const getAppliedJobs = async (userId, token) => {
   }
 };
 
+const registerCompany = async (name, address, location, userId, token) => {
+  try {
+    // Log company data for debugging
+    console.log("Company Name:", name);
+    console.log("Address:", address);
+    console.log("Location:", location);
+    console.log("User ID:", userId);
+    console.log("Token:", token);
+
+    // API call to register the company
+    const response = await axiosClient.post('/companies', {
+      data: {
+        name: name,
+        address: address,
+        location: location,
+        user: userId,  // Associate the company with the logged-in user
+      }
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}` // Pass JWT token in the request headers
+      }
+    });
+
+    console.log("Company registration successful:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error registering company:", error);
+    throw error;
+  }
+};
+
 
 
 export default{
@@ -127,6 +158,7 @@ export default{
   getAppliedJobs,
   applyForJob,
   updateUserProfile,
+  registerCompany,
 };
 
 

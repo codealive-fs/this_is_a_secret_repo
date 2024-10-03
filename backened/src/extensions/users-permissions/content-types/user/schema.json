@@ -84,6 +84,19 @@
       "relation": "oneToMany",
       "target": "api::job-application.job-application",
       "mappedBy": "users_permissions_user"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company",
+      "mappedBy": "users_permissions_user"
+    },
+    "photo": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

@@ -382,6 +382,12 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'oneToMany',
       'api::job.job'
     >;
+    location: Attribute.String;
+    users_permissions_user: Attribute.Relation<
+      'api::company.company',
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -923,6 +929,12 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::job-application.job-application'
     >;
+    company: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToOne',
+      'api::company.company'
+    >;
+    photo: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
