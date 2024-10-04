@@ -120,11 +120,11 @@ const getAppliedJobs = async (userId, token) => {
 const registerCompany = async (name, address, location, userId, token) => {
   try {
     // Log company data for debugging
-    console.log("Company Name:", name);
-    console.log("Address:", address);
-    console.log("Location:", location);
-    console.log("User ID:", userId);
-    console.log("Token:", token);
+    // console.log("Company Name:", name);
+    // console.log("Address:", address);
+    // console.log("Location:", location);
+    // console.log("User ID:", userId);
+    // console.log("Token:", token);
 
     // API call to register the company
     const response = await axiosClient.post('/companies', {
@@ -132,7 +132,10 @@ const registerCompany = async (name, address, location, userId, token) => {
         name: name,
         address: address,
         location: location,
-        user: userId,  // Associate the company with the logged-in user
+        users_permissions_user:{
+          id: userId
+        }
+          // Associate the company with the logged-in user
       }
     }, {
       headers: {

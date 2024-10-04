@@ -66,30 +66,7 @@ export default function UpdateProfile() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center my-20">
-      <div className="flex flex-col bg-slate-100 border border-gray-200 p-10">
-        <h2 className="font-bold text-4xl mb-3">Update Profile</h2>
-        <div className="flex flex-col w-full gap-5 mt-7">
-          <Input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            type="text"
-            placeholder="Username"
-          />
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            placeholder="Email"
-          />
-          {/* CV upload input */}
-          <input type="file" onChange={onFileChange} accept=".pdf,.doc,.docx" />
-          <Button onClick={onUpdateProfile} disabled={loading}>
-            {loading ? "Updating..." : "Update Profile"}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <div>Register your company here.</div>
   );
 }
 

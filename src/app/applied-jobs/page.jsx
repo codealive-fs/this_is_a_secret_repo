@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useContext } from "react";
 import GlobalAPI from "../_utils/GlobalApi"; // Import GlobalAPI
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../_context/AuthContext";
 
 function AppliedJobs() {
   const { user, token } = useContext(AuthContext); // Get logged-in user and token

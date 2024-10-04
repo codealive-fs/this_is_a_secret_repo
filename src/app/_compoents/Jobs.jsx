@@ -1,7 +1,7 @@
 "use client"
 // import JobRow from "./JobRow"
 import { useContext } from "react";
-import { JobsContext } from "../context/JobsContext";
+import { JobsContext } from "../_context/JobsContext";
 import { Button } from "@/components/ui/button"
 import { JobRow } from "./JobRow";
 
