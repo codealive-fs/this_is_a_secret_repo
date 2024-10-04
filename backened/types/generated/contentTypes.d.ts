@@ -419,7 +419,6 @@ export interface ApiJobJob extends Schema.CollectionType {
   };
   attributes: {
     title: Attribute.String;
-    company: Attribute.String;
     salary: Attribute.Integer & Attribute.DefaultTo<0>;
     expiary_date: Attribute.Date;
     location: Attribute.String;

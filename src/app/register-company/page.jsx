@@ -1,76 +1,63 @@
-"use client";
-import { useState, useEffect } from "react";
+"use client"
+
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import GlobalApi from '@/app/_utils/GlobalApi';  
 import { toast } from "sonner";
+import GlobalApi from '@/app/_utils/GlobalApi';  
 
-export default function UpdateProfile() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [cv, setCV] = useState(null); // New state for CV file
+export default function RegisterCompany() {
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (user) {
-      setUsername(user.username);
-      setEmail(user.email);
-      console.log("Fetched username: ", user.username);
-      console.log("Fetched email: ", user.email);
-    }
-  }, []);
-
-  // Handle file change for CV
-  const onFileChange = (e) => {
-    setCV(e.target.files[0]);  // Update the state with the selected CV file
-    console.log(cv);
-  };
-
-  const onUpdateProfile = async () => {
+  const onRegisterCompany = async () => {
     setLoading(true);
     const user = JSON.parse(sessionStorage.getItem("user"));
     const token = sessionStorage.getItem("jwt");
     const userId = user?.id;
 
     try {
-      let cvFileId = null;
-
-      // If a CV is selected, upload it first
-      if (cv) {
-        const uploadedFiles = await GlobalApi.uploadCV(cv, token);  // New method to upload CV
-        cvFileId = uploadedFiles[0]?.id;  // Get the file ID after upload
-      }
-
-      const updatedData = {
-        username: username,
-        email: email,
-        cv: cvFileId  // Pass CV file ID to update profile
-      };
-
-      console.log("Updated Data: ", updatedData);
-
-      // Call the API to update user profile
-      const updatedUser = await GlobalApi.updateUserProfile(userId, updatedData, token);
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
-      toast("Profile updated successfully!");
-      router.push("/");
+      const result = await GlobalApi.registerCompany(name, address, location, userId, token);
+      toast("Company registered successfully!");
+      router.push("/"); // Redirect to home or company dashboard
     } catch (error) {
-      toast.error("An error occurred while updating the profile.");
+      toast.error("An error occurred while registering the company.");
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div>Register your company here.</div>
+    <div className="flex flex-col items-center justify-center my-20">
+      <div className="flex flex-col bg-slate-100 border border-gray-200 p-10">
+        <h2 className="font-bold text-4xl mb-3">Register Company</h2>
+        <div className="flex flex-col w-full gap-5 mt-7">
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            type="text"
+            placeholder="Company Name"
+          />
+          <Input
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            type="text"
+            placeholder="Address"
+          />
+          <Input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            type="text"
+            placeholder="Location"
+          />
+          <Button onClick={onRegisterCompany} disabled={loading}>
+            {loading ? "Registering..." : "Register Company"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
-
-
-
-
-

@@ -29,9 +29,10 @@ export default function Header() {
       if (user && token) {
         try {
           const company = await GlobalAPI.getUserCompany(user.id, token);
-          // console.log("COMPANY-------->", company);
+          console.log("COMPANY-------->", company);
+          const companyResponse = companyResponse?.data;
           
-          setHasCompany(!!company); // Set true if company exists, false otherwise
+          setHasCompany(!!companyResponse); // Set true if company exists, false otherwise
           
         } catch (error) {
           console.error("Error checking company:", error);
@@ -39,7 +40,7 @@ export default function Header() {
       }
     };
     checkCompany();
-  }, [token]);
+  }, [user, token]);
   
   const logout = () => {
         sessionStorage.removeItem("user");

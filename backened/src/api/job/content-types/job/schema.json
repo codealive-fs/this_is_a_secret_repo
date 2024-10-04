@@ -17,9 +17,6 @@
       "unique": false,
       "required": false
     },
-    "company": {
-      "type": "string"
-    },
     "salary": {
       "type": "integer",
       "default": 0

@@ -99,6 +99,18 @@ const applyForJob = async (jobId, userId, token) => {
   }
 };
 
+  const getUserCompany = async (userId, token) => {
+  const response = await axiosClient.get(`/users/${userId}?populate=company`, {
+    
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("COMPANY RESPONSE: ", companyResponse)
+  console.log("getUserCompany========>", response.data);
+  
+  return response.data.company;
+};
 
 const getAppliedJobs = async (userId, token) => {
   try {
@@ -120,11 +132,11 @@ const getAppliedJobs = async (userId, token) => {
 const registerCompany = async (name, address, location, userId, token) => {
   try {
     // Log company data for debugging
-    // console.log("Company Name:", name);
-    // console.log("Address:", address);
-    // console.log("Location:", location);
-    // console.log("User ID:", userId);
-    // console.log("Token:", token);
+    console.log("Company Name:", name);
+    console.log("Address:", address);
+    console.log("Location:", location);
+    console.log("User ID:", userId);
+    console.log("Token:", token);
 
     // API call to register the company
     const response = await axiosClient.post('/companies', {
@@ -139,7 +151,8 @@ const registerCompany = async (name, address, location, userId, token) => {
       }
     }, {
       headers: {
-        Authorization: `Bearer ${token}` // Pass JWT token in the request headers
+        'Authorization': `Bearer ${token}`,
+        // 'Content-Type': 'multipart/form-data'
       }
     });
 
@@ -153,12 +166,15 @@ const registerCompany = async (name, address, location, userId, token) => {
 
 
 
+
+
 export default{
   getJobs,
   registerUser,
   signIn,
   uploadCV,
   getAppliedJobs,
+  getUserCompany,
   applyForJob,
   updateUserProfile,
   registerCompany,
