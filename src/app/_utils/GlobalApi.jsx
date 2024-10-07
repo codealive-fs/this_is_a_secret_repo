@@ -6,7 +6,7 @@ const axiosClient = axios.create({
 
 
 const getJobs = () => axiosClient.get("/jobs?populate=*").then(resp => {
-    console.log("++++++++++++", resp.data);
+    // console.log("++++++++++++", resp.data);
     return resp.data;
 });
 
@@ -69,21 +69,22 @@ const uploadCV = async (file, token) => {
   }
 };
 
-const applyForJob = async (jobId, userId, token) => {
+const applyForJob = async (jobId, companyId,userId, token) => {
   try {
   
     // Log jobId and userId to check if they are being passed correctly
     console.log("Job ID:", jobId);
+    console.log("CompanyID", companyId);
     console.log("User ID:", userId);
     console.log("Token:", token);
+    
   
     const response = await axiosClient.post('/job-applications', {
       data: {
-        job: jobId,
-        user: userId,
+        jobs: {id: jobId},
         status: 'applied',
-        jobs: {id: jobId}
-
+        company: {id: companyId},
+        users_permissions_user: {id: userId}
       }
     }, {
       headers: {
@@ -109,12 +110,12 @@ const applyForJob = async (jobId, userId, token) => {
   console.log("COMPANY RESPONSE: ", companyResponse)
   console.log("getUserCompany========>", response.data);
   
-  return response.data.company;
+  return response.data;
 };
 
 const getAppliedJobs = async (userId, token) => {
   try {
-    const response = await axiosClient.get(`/job-applications?filters[user][$eq]=${userId}&populate=jobs`, {
+    const response = await axiosClient.get(`/job-applications?filters[users_permissions_user][$eq]=${userId}&populate=*`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -164,6 +165,83 @@ const registerCompany = async (name, address, location, userId, token) => {
   }
 };
 
+// const addJob = async (e) => {
+//   e.preventDefault();
+//   setLoading(true);
+//   setError("");
+
+//   try {
+//     const response = await fetch('/api/add-job', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(formData),
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || 'Failed to add job');
+//     }
+
+//     const result = await response.json();
+//     console.log("Job added successfully:", result);
+//     toast.success("Job added successfully!");
+//     router.push("/jobs");
+//   } catch (error) {
+//     console.error("Error adding job:", error);
+//     setError(error.message || "An error occurred while adding the job.");
+//     toast.error(error.message || "An error occurred while adding the job.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+const addJob = async (title, salary, expiaryDate, jobType, education, experience, userId, token) => {
+  try {
+    // Log job data for debugging
+    console.log("Job Title:", title);
+    console.log("Salary:", salary);
+    console.log("Expiary Date:", expiaryDate);
+    console.log("Job Type:", jobType);
+    console.log("Education:", education);
+    console.log("Experience:", experience);
+    console.log("company ID:", companyId);
+    console.log("User ID:", userId);
+    console.log("Token:", token);
+
+    // API call to add the job
+    const response = await axiosClient.post('/jobs', {
+      data: {
+        title: title,
+        salary: salary,
+        expiary_date: expiaryDate,
+        jobType: jobType,
+        education: education,
+        experience: experience,
+        // firm: {
+        //   id: companyId
+        // },
+        user: {
+          id: userId
+        }
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log("Job added successfully:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding job:", error);
+    throw error;
+  }
+};
 
 
 
@@ -178,6 +256,7 @@ export default{
   applyForJob,
   updateUserProfile,
   registerCompany,
+  addJob,
 };
 
 

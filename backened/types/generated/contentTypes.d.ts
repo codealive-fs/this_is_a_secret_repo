@@ -388,6 +388,11 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    job_applications: Attribute.Relation<
+      'api::company.company',
+      'oneToMany',
+      'api::job-application.job-application'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -483,14 +488,17 @@ export interface ApiJobApplicationJobApplication extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    user: Attribute.Integer;
-    job: Attribute.Integer;
     jobs: Attribute.Relation<
       'api::job-application.job-application',
       'manyToOne',
       'api::job.job'
     >;
     slug: Attribute.UID;
+    company: Attribute.Relation<
+      'api::job-application.job-application',
+      'manyToOne',
+      'api::company.company'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

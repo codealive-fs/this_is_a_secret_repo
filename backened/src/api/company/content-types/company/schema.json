@@ -38,6 +38,12 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "company"
+    },
+    "job_applications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::job-application.job-application",
+      "mappedBy": "company"
     }
   }
 }

@@ -18,9 +18,9 @@ export default function Header() {
   // const { user, logout, token, loading } = useContext(AuthContext);
   
   const [hasCompany, setHasCompany] = useState(false);
-  // console.log("user", user, "token", token);
   
   const user = JSON.parse(sessionStorage.getItem("user"));
+  console.log("user", user, "token", token);
   useEffect(() => {
     // Check if the logged-in user has a registered company
 
@@ -30,7 +30,7 @@ export default function Header() {
         try {
           const company = await GlobalAPI.getUserCompany(user.id, token);
           console.log("COMPANY-------->", company);
-          const companyResponse = companyResponse?.data;
+          const companyResponse = company?.id;
           
           setHasCompany(!!companyResponse); // Set true if company exists, false otherwise
           
@@ -40,7 +40,7 @@ export default function Header() {
       }
     };
     checkCompany();
-  }, [user, token]);
+  }, [token]);
   
   const logout = () => {
         sessionStorage.removeItem("user");
@@ -78,6 +78,10 @@ export default function Header() {
 
               <Link href="/applied-jobs">
                 <Button>Applied Jobs</Button>
+              </Link>
+
+              <Link href="/add-job">
+                <Button>Add a Job!</Button>
               </Link>
 
               {/* Conditionally display the Add Job button */}

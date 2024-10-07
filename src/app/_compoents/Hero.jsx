@@ -11,7 +11,7 @@ export default function Hero() {
   
   // const [jobs, setJobs] = useState(jobList || []);
   const { jobs: jobList, loading } = useContext(JobsContext);
-  const { user, token } = useAuthContext(); // Get logged-in user and token
+  // const { user, token } = useAuthContext(); // Get logged-in user and token
   const [jobs, setJobs] = useState(jobList || []);
   const [jobStats, setJobStats] = useState({
     totalJobs: 0,
@@ -39,6 +39,10 @@ export default function Hero() {
   });
   const [searchQuery, setSearchQuery] = useState({ keyword: "", location: "" });
 
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      const token = sessionStorage.getItem("jwt");
+      console.log("user", user.id, "token");
+      
   useEffect(() => {
     applyFilters();
   }, [filters, searchQuery, jobList]);
@@ -54,41 +58,29 @@ export default function Hero() {
         .catch((error) => console.error("Error fetching applied jobs:", error));
     }
   }, [user, token]);
+  
+    const applyForJob = async (jobId, companyId) => {
+      debugger
+      console.log("companyID----->", companyId);
+      
+      if (!user || !token) {
+        alert("You must be logged in to apply.");
+        return;
+      }
+  
+      try {
+        await GlobalAPI.applyForJob(jobId, companyId, user.id, token);
+        console.log(companyId);
+        
+        setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
+        alert("Successfully applied to the job!");
+      } catch (error) {
+        console.error("Error applying for job:", error);
+        alert("Failed to apply for the job.");
+      }
+    };
 
 
-  const applyForJob = async (jobId, compId) => {
-    if (!user || !token) {
-      alert("You must be logged in to apply.");
-      return;
-    }
-
-    try {
-      await GlobalAPI.applyForJob(jobId, compId, user.id, token);
-      setAppliedJobs([...appliedJobs, jobId, compId]); // Add the job to the list of applied jobs
-      alert("Successfully applied to the job!");
-    } catch (error) {
-      console.error("Error applying for job:", error);
-      alert("Failed to apply for the job.");
-    }
-  };
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-  // const applyForJob = async (jobId) => {
-  //   if (!user || !token) {
-  //     alert("You must be logged in to apply.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await GlobalAPI.applyForJob(jobId, user.id, token);
-  //     console.log("userId", user.id, "jobId", jobId);
-  //     alert("Successfully applied to the job!");
-  //   } catch (error) {
-  //     console.error("Error applying for job:", error);
-  //     alert("Failed to apply for the job.");
-  //   }
-  // };
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({
@@ -106,7 +98,7 @@ export default function Hero() {
   //     // [filterName]: value !== undefined ? value : !prevFilters[filterName],
   //   }));
   // };
-
+  
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
     setSearchQuery((prevQuery) => ({
@@ -114,12 +106,12 @@ export default function Hero() {
       [name]: value,
     }));
   };
-
+  
   const applyFilters = () => {
     // console.log("Job list before filtering:", jobList);
-    // console.log("Current filters:", filters); 
+    // console.log("Current filters---------->", jobList); 
     let filteredJobs = jobList;
-
+    
     // Apply filter conditions
     if (filters.fullTime) {
       filteredJobs = filteredJobs.filter((job) => job.attributes.jobType === "Full-Time");
@@ -158,40 +150,43 @@ export default function Hero() {
     if (keyword) {
       filteredJobs = filteredJobs.filter((job) =>
         job.attributes.title.toLowerCase().includes(keyword.toLowerCase())
-      );
-    }
-    if (location) {
-      filteredJobs = filteredJobs.filter((job) =>
-        job.attributes.location.toLowerCase().includes(location.toLowerCase())
-      );
-    }
-    // Apply experience filters
-    if (filters.experienceJunior) {
-      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Junior");
-    }
-    if (filters.experienceMidLevel) {
-      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Mid-Level");
-    }
-    if (filters.experienceSenior) {
-      filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Senior");
-    }
-      // Apply Salary Range Filter
-    if (filters.minSalary) {
-      filteredJobs = filteredJobs.filter((job) =>
-        parseInt(job.attributes.salary) >= parseInt(filters.minSalary)
-      );
-    }
-    if (filters.maxSalary) {
-      filteredJobs = filteredJobs.filter((job) =>
-        parseInt(job.attributes.salary) <= parseInt(filters.maxSalary)
-      );
-    }
-    // console.log("Filtered jobs:", filteredJobs); // Log filtered jobs
-    setJobs(filteredJobs);
-    
-    const stats = calculateJobStats(filteredJobs);
-    setJobStats(stats);
-  };
+    );
+  }
+  if (location) {
+    filteredJobs = filteredJobs.filter((job) =>
+      // job?.attributes?.location?.toLowerCase().includes(location.toLowerCase())
+    job?.attributes?.firm?.data?.attributes?.location?.toLowerCase().includes(location.toLowerCase())
+  );
+}
+// Apply experience filters
+if (filters.experienceJunior) {
+  filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Junior");
+}
+if (filters.experienceMidLevel) {
+  filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Mid-Level");
+}
+if (filters.experienceSenior) {
+  filteredJobs = filteredJobs.filter((job) => job.attributes.experience === "Senior");
+}
+// Apply Salary Range Filter
+if (filters.minSalary) {
+  filteredJobs = filteredJobs.filter((job) =>
+    parseInt(job.attributes.salary) >= parseInt(filters.minSalary)
+);
+}
+if (filters.maxSalary) {
+  filteredJobs = filteredJobs.filter((job) =>
+    parseInt(job.attributes.salary) <= parseInt(filters.maxSalary)
+);
+}
+// console.log("Filtered jobs:", filteredJobs); // Log filtered jobs
+setJobs(filteredJobs);
+console.log("---------------->", filteredJobs);
+
+
+const stats = calculateJobStats(filteredJobs);
+setJobStats(stats);
+};
 
   const handleSearch = (event) => {
     event.preventDefault();
@@ -200,7 +195,7 @@ export default function Hero() {
   };
 
   return (
-
+    
     <section className="py-8">
     <h1 className="text-4xl text-center font-bold mb-8">
       Find your next <br /> dream job
@@ -218,7 +213,7 @@ export default function Hero() {
             placeholder="Job title or keyword.."
             value={searchQuery.keyword}
             onChange={handleSearchChange}
-          />
+            />
           <input
             name="location"
             type="search"
@@ -226,7 +221,7 @@ export default function Hero() {
             placeholder="Location.."
             value={searchQuery.location}
             onChange={handleSearchChange}
-          />
+            />
           <button className="bg-blue-600 text-white rounded-md px-4 py-2" type="submit">
             Search
           </button>
@@ -237,13 +232,18 @@ export default function Hero() {
                 <p>Min Salary: ${jobStats.minSalary}</p>
                 <p>Max Salary: ${jobStats.maxSalary}</p>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {jobs.map((job) => {
             const jobId = job.id;
+            console.log(job);
+            
+            const companyId = job.attributes?.firm?.data?.id; // Extract company ID
+            console.log("CompanyID---------->", companyId);
+            
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
-            // console.log("job", job);
+            // const companyId = job?.attributes?.firm?.data?.id; // Extract company ID
+            // console.log("CompanyID---------->", companyId);
 
             return (
               
@@ -265,7 +265,7 @@ export default function Hero() {
                       ? "bg-gray-400"
                       : "bg-blue-600 text-white"
                   }`}
-                  onClick={() => applyForJob(jobId)}
+                  onClick={() => applyForJob(jobId, companyId)}
                   disabled={deadlinePassed || alreadyApplied}
                 >
                   {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
@@ -278,6 +278,25 @@ export default function Hero() {
     </div>
   </section>
 
+
+
+// after applyForJob
+//////////////////////////////////////////////////////////////////////////////////////////////////
+  // const applyForJob = async (jobId) => {
+  //   if (!user || !token) {
+  //     alert("You must be logged in to apply.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await GlobalAPI.applyForJob(jobId, user.id, token);
+  //     console.log("userId", user.id, "jobId", jobId);
+  //     alert("Successfully applied to the job!");
+  //   } catch (error) {
+  //     console.error("Error applying for job:", error);
+  //     alert("Failed to apply for the job.");
+  //   }
+  // };
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////

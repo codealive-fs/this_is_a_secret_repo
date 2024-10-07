@@ -15,14 +15,17 @@ function AppliedJobs() {
       GlobalAPI.getAppliedJobs(user.id, token)
         .then((data) => {
           setAppliedJobs(data.data); // Assuming response structure is { data: [...] }
+          
           setLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching applied jobs:", error);
           setLoading(false);
         });
-    }
-  }, [user, token]);
+      }
+    }, [token]);
+    console.log(appliedJobs);
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -37,15 +40,19 @@ function AppliedJobs() {
       <h1>Your Applied Jobs</h1>
       <ul>
         {appliedJobs.map((application) => {
-          const job = application.attributes.jobs?.data?.attributes; // Access the job attributes
+          // const { status, jobs, company } = application.attributes;
+          const job = application.attributes; // Access the job attributes
+          // const job1 = application.attributes.company.data[0].attributes;
+          console.log("JOBS---->",job);
+          
           return (
             <li key={application.id}>
               {job ? (
                 <>
-                  <h3>{job.title}</h3>
-                  <p>Company: {job.company}</p>
-                  <p>Location: {job.location}</p>
-                  <p>Status: {application.attributes.status}</p>
+                  <h3>{job?.jobs?.data?.attributes?.title}</h3>
+                  <p>Company: {job?.company?.data?.attributes?.name}</p>
+                  <p>Location: {job?.jobs?.data?.attributes?.location}</p>
+                  <p>Status: {application?.attributes?.status}</p>
                 </>
               ) : (
                 <p>Job information is not available.</p>
