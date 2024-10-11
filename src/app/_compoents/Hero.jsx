@@ -41,7 +41,7 @@ export default function Hero() {
 
       const user = JSON.parse(sessionStorage.getItem("user"));
       const token = sessionStorage.getItem("jwt");
-      console.log("user", user.id, "token");
+      // console.log("user", user.id, "token");
       
   useEffect(() => {
     applyFilters();
@@ -60,7 +60,6 @@ export default function Hero() {
   }, [user, token]);
   
     const applyForJob = async (jobId, companyId) => {
-      debugger
       console.log("companyID----->", companyId);
       
       if (!user || !token) {
@@ -250,7 +249,7 @@ setJobStats(stats);
               <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-bold">{job.attributes.title}</h3>
                 <p className="text-gray-700">
-                  {job.attributes.firm.data.attributes.name} - {job.attributes.location} - {job.attributes.jobType}
+                  {job.attributes.firm.data.attributes.name} - {job?.attributes?.firm?.data?.attributes?.location} - {job.attributes.jobType}
                 </p>
                 <p className='text-gray-700'></p>
                 <p className="text-gray-700">{job.attributes.description}</p>

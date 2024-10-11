@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider value={{ token, setToken, user, setUser }}>
+        <AuthProvider value={{ token, user, setToken, setUser }}>
           <JobsProvider>
             <div className="container">
               <Header />

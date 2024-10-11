@@ -92,11 +92,15 @@
       "mappedBy": "users_permissions_user"
     },
     "photo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "fullName": {
+      "type": "string"
     }
   }
 }

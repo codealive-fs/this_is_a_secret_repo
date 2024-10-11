@@ -80,21 +80,21 @@ export default function Header() {
                 <Button>Applied Jobs</Button>
               </Link>
 
-              <Link href="/add-job">
-                <Button>Add a Job!</Button>
-              </Link>
-
               {/* Conditionally display the Add Job button */}
               {hasCompany ? (
+                <>
                 <Link href="/add-job">
                   <Button>Add Job</Button>
                 </Link>
+                <Link href="/added-jobs">
+                  <Button>Added Jobs</Button>
+                </Link>
+                </>
               ) : (
                 <Link href="/register-company">
                   <Button>Register Company</Button>
                 </Link>
               )}
-
               <Button onClick={logout}>Logout</Button>
             </>
           )}

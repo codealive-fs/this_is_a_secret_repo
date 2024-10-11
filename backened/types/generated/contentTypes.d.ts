@@ -942,6 +942,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::company.company'
     >;
     photo: Attribute.Media<'images'>;
+    fullName: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

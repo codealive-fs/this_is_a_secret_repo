@@ -42,23 +42,23 @@ export default function AddJob() {
     }
  });
     
- useEffect(() => {
-  // Log the companyId to check if it's set correctly
-  if (companyId) {
-    console.log("Company ID in state:", companyId);
-  }
-}, [companyId]
-)   
+//  useEffect(() => {
+//   // Log the companyId to check if it's set correctly
+//   if (companyId) {
+//     console.log("Company ID in state:", companyId);
+//   }
+// }, [companyId]
+// )   
     
 
-
-  const getUserCompany = async (userId, token) => {
+const getUserCompany = async (userId, token) => {
+    // debugger
     try {
       const response = await GlobalApi.getUserCompany(userId, token);
 
       if (response && response.id) {
-        setCompanyId(response.id);
-        console.log("Company ID fetched:", response.id);
+        console.log("Company ID fetched:", response.company.id);
+        setCompanyId(response?.company?.id);
       } else {
         toast.error("No company associated with the user.");
       }
@@ -67,13 +67,13 @@ export default function AddJob() {
       toast.error("Failed to fetch company data.");
     }
   };
-
+  
   const onAddJob = async () => {
-    setLoading(true);
     const user = JSON.parse(sessionStorage.getItem("user"));
     const token = sessionStorage.getItem("jwt");
     const userId = user?.id;
 
+    setLoading(true);
     try {
       const result = await GlobalApi.addJob(
         title,
@@ -82,12 +82,12 @@ export default function AddJob() {
         jobType,
         education,
         experience,
-        Number(companyId),
+        companyId,
         userId,
         token
       );
       toast.success("Job added successfully!");
-      router.push("/jobs");
+      // router.push("/jobs");
     } catch (error) {
       toast.error("An error occurred while adding the job.");
       console.error(error);
@@ -103,7 +103,7 @@ export default function AddJob() {
           <CardTitle className="text-2xl font-bold">Add New Job</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => { e.preventDefault(); onAddJob(); }} className="space-y-4">
+          <form onSubmit={(e) => { e.preventDefault(); onAddJob()}} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Job Title</Label>
               <Input
