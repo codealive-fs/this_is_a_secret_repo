@@ -20,17 +20,17 @@ export default function Header() {
   const [hasCompany, setHasCompany] = useState(false);
   
   const user = JSON.parse(sessionStorage.getItem("user"));
-  console.log("user", user, "token", token);
+  // console.log("user", user, "token", token);
   useEffect(() => {
     // Check if the logged-in user has a registered company
 
     const checkCompany = async () => {
-
+      // debugger
       if (user && token) {
         try {
-          const company = await GlobalAPI.getUserCompany(user.id, token);
-          console.log("COMPANY-------->", company);
-          const companyResponse = company?.id;
+          const response = await GlobalAPI.getUserCompany(user.id, token);
+          // console.log("COMPANY-------->", company.id);
+          const companyResponse = response.company.id;
           
           setHasCompany(!!companyResponse); // Set true if company exists, false otherwise
           

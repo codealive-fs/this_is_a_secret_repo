@@ -69,7 +69,7 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::job.job",
-      "mappedBy": "user"
+      "mappedBy": "author"
     },
     "cv": {
       "type": "media",
@@ -85,12 +85,6 @@
       "target": "api::job-application.job-application",
       "mappedBy": "users_permissions_user"
     },
-    "company": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::company.company",
-      "mappedBy": "users_permissions_user"
-    },
     "photo": {
       "type": "media",
       "multiple": false,
@@ -101,6 +95,18 @@
     },
     "fullName": {
       "type": "string"
+    },
+    "applied_jobs": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::job.job",
+      "inversedBy": "applied_users"
+    },
+    "company": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::company.company",
+      "mappedBy": "owner"
     }
   }
 }

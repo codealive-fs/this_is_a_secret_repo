@@ -47,37 +47,57 @@ export default function Hero() {
     applyFilters();
   }, [filters, searchQuery, jobList]);
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-  useEffect(() => {
-    if (user && token) {
-      // Fetch the jobs the user has already applied for
-      GlobalAPI.getAppliedJobs(user.id, token)
-        .then((response) => {
-          const appliedJobIds = response.data.map((application) => application.attributes.job.data.id);
-          setAppliedJobs(appliedJobIds); // Save the applied job IDs to state
-        })
-        .catch((error) => console.error("Error fetching applied jobs:", error));
+  // useEffect(() => {
+  //   if (user && token) {
+  //     // Fetch the jobs the user has already applied for
+  //     GlobalAPI.getAppliedJobs(user.id, token)
+  //       .then((response) => {
+  //         const appliedJobIds = response.data.map((jobs) => jobs.attributes.job.data.id);
+  //         setAppliedJobs(appliedJobIds); // Save the applied job IDs to state
+  //       })
+  //       .catch((error) => console.error("Error fetching applied jobs:", error));
+  //   }
+  // }, [user, token]);
+
+
+  const applyForJob = async (jobId) => {
+    if (!user || !token) {
+      alert("You must be logged in to apply.");
+      return;
     }
-  }, [user, token]);
-  
-    const applyForJob = async (jobId, companyId) => {
-      console.log("companyID----->", companyId);
+    
+    try {
+      await GlobalAPI.applyForJob(jobId, user.id, token); // Removed companyId
+      setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
       
-      if (!user || !token) {
-        alert("You must be logged in to apply.");
-        return;
-      }
+      alert("Successfully applied to the job!");
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      alert("Failed to apply for the job.");
+    }
+  };
+  console.log(appliedJobs);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // const applyForJob = async (jobId, companyId) => {
+    //   console.log("companyID----->", companyId);
+      
+    //   if (!user || !token) {
+    //     alert("You must be logged in to apply.");
+    //     return;
+    //   }
   
-      try {
-        await GlobalAPI.applyForJob(jobId, companyId, user.id, token);
-        console.log(companyId);
+    //   try {
+    //     await GlobalAPI.applyForJob(jobId, companyId, user.id, token);
+    //     console.log(companyId);
         
-        setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
-        alert("Successfully applied to the job!");
-      } catch (error) {
-        console.error("Error applying for job:", error);
-        alert("Failed to apply for the job.");
-      }
-    };
+    //     setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
+    //     alert("Successfully applied to the job!");
+    //   } catch (error) {
+    //     console.error("Error applying for job:", error);
+    //     alert("Failed to apply for the job.");
+    //   }
+    // };
 
 
 
@@ -236,8 +256,8 @@ setJobStats(stats);
             const jobId = job.id;
             console.log(job);
             
-            const companyId = job.attributes?.firm?.data?.id; // Extract company ID
-            console.log("CompanyID---------->", companyId);
+            // const companyId = job.attributes?.firm?.data?.id; // Extract company ID
+            // console.log("CompanyID---------->", companyId);
             
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
@@ -258,16 +278,27 @@ setJobStats(stats);
                 </p>
                 <p className="text-gray-700">{job.attributes.salary}</p>
 
-                <button
+                {/* <button
                   className={`mt-4 px-4 py-2 rounded ${
                     deadlinePassed || alreadyApplied
                       ? "bg-gray-400"
                       : "bg-blue-600 text-white"
                   }`}
-                  onClick={() => applyForJob(jobId, companyId)}
+                  onClick={() => applyForJob(jobId)}
                   disabled={deadlinePassed || alreadyApplied}
                 >
                   {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
+                </button> */}
+                <button
+                  className={`mt-4 px-4 py-2 rounded ${
+                    deadlinePassed
+                      ? "bg-gray-400"
+                      : "bg-blue-600 text-white"
+                  }`}
+                  onClick={() => applyForJob(jobId)}
+                  disabled={deadlinePassed}
+                >
+                  { deadlinePassed ? "Deadline Passed" : "Apply Now"}
                 </button>
               </div>
             );

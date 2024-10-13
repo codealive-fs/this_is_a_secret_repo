@@ -71,12 +71,6 @@
         "Senior"
       ]
     },
-    "user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user",
-      "inversedBy": "jobs"
-    },
     "firm": {
       "type": "relation",
       "relation": "manyToOne",
@@ -88,6 +82,18 @@
       "relation": "oneToMany",
       "target": "api::job-application.job-application",
       "mappedBy": "jobs"
+    },
+    "applied_users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "applied_jobs"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "jobs"
     }
   }
 }

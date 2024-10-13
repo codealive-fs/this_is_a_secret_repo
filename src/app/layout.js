@@ -16,11 +16,11 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
-
+  
   const [token, setThisToken] = useState(null);
   const [user, setThisUser] = useState(null);
-
-
+  
+  
   const setToken = (accesstoken = null) => {
     if (accesstoken) {
       setThisToken(accesstoken);
@@ -30,9 +30,9 @@ export default function RootLayout({ children }) {
   const setUser = () => {
     const isUser = JSON.parse(sessionStorage.getItem("user"));
     if (isUser) setThisUser(isUser)
-    else setThisUser(null)
+      else setThisUser(null)
   }
-
+  
   useEffect(() => {
     const jwt = sessionStorage.getItem('jwt');
     if (jwt) {
@@ -40,14 +40,18 @@ export default function RootLayout({ children }) {
       setUser();
     }
     else {
+      console.log("No token found");
       setToken(null);
       setUser();
     }
   }, [token])
+  // console.log("Token from sessionStorage:", token); // Log the token here
+  // debugger
 
   return (
     <html lang="en">
       <body className={inter.className}>
+
         <AuthProvider value={{ token, user, setToken, setUser }}>
           <JobsProvider>
             <div className="container">

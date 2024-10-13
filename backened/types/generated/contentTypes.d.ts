@@ -383,7 +383,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'api::job.job'
     >;
     location: Attribute.String;
-    users_permissions_user: Attribute.Relation<
+    owner: Attribute.Relation<
       'api::company.company',
       'oneToOne',
       'plugin::users-permissions.user'
@@ -445,11 +445,6 @@ export interface ApiJobJob extends Schema.CollectionType {
     datePosted: Attribute.DateTime;
     slug: Attribute.UID<'api::job.job', 'title'>;
     experience: Attribute.Enumeration<['Junior', 'Mid-Level', 'Senior']>;
-    user: Attribute.Relation<
-      'api::job.job',
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
     firm: Attribute.Relation<
       'api::job.job',
       'manyToOne',
@@ -459,6 +454,16 @@ export interface ApiJobJob extends Schema.CollectionType {
       'api::job.job',
       'oneToMany',
       'api::job-application.job-application'
+    >;
+    applied_users: Attribute.Relation<
+      'api::job.job',
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    author: Attribute.Relation<
+      'api::job.job',
+      'manyToOne',
+      'plugin::users-permissions.user'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -936,13 +941,18 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::job-application.job-application'
     >;
+    photo: Attribute.Media<'images'>;
+    fullName: Attribute.String;
+    applied_jobs: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'manyToMany',
+      'api::job.job'
+    >;
     company: Attribute.Relation<
       'plugin::users-permissions.user',
       'oneToOne',
       'api::company.company'
     >;
-    photo: Attribute.Media<'images'>;
-    fullName: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

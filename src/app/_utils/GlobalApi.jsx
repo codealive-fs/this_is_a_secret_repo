@@ -70,36 +70,117 @@ const uploadCV = async (file, token) => {
   }
 };
 
-const applyForJob = async (jobId, companyId,userId, token) => {
+
+const applyForJob = async (jobId, userId, token) => {
   try {
-  
-    // Log jobId and userId to check if they are being passed correctly
-    console.log("Job ID:", jobId);
-    console.log("CompanyID", companyId);
-    console.log("User ID:", userId);
-    console.log("Token:", token);
-    
-  
-    const response = await axiosClient.post('/job-applications', {
+    // Fetch the existing job data (with applied_users populated)
+    const jobResponse = await axiosClient.get(`/jobs/${jobId}?populate=applied_users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const jobData = jobResponse.data;
+    // Extract the current applied users
+    const currentAppliedUsers = jobData.data.attributes.applied_users.data;
+
+    // Map the applied users to an array of objects with just the ID
+    const updatedAppliedUsers = currentAppliedUsers.map(user => ({ id: user.id }));
+
+    // Add the new user to the applied_users array (if not already applied)
+    if (!updatedAppliedUsers.some(user => user.id === userId)) {
+      updatedAppliedUsers.push({ id: userId });
+    }
+
+    // Update the job with the new applied_users array
+    const updateResponse = await axiosClient.put(`/jobs/${jobId}`, {
       data: {
-        jobs: {id: jobId},
-        status: 'applied',
-        company: {id: companyId},
-        users_permissions_user: {id: userId}
-      }
+        applied_users: updatedAppliedUsers,
+      },
     }, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
-    
-    console.log("Job application successful:", response);
-    return response.data;
+
+    console.log('Updated job with applied users: ', updateResponse.data);
+    return updateResponse.data;
+
   } catch (error) {
-    console.error("Error applying for job:", error);
-    throw error;
+    console.error('Error applying to job: ', error);
   }
 };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// const applyForJob = async (jobId, userId, token) => {
+//   try {
+//     // Fetch the existing job data (with applied_users populated)
+//     const jobResponse = await axiosClient.get(`/jobs/${jobId}?populate=applied_users`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     const jobData = jobResponse.data;
+//     // console.log("lksjdflksjdjobData===================>", jobData);
+    
+    
+//     // Add the new user to the applied_users array if they aren't already in it
+//     console.log("I am nobody-------->", jobData.data.attributes.applied_users.data);
+//     const updatedAppliedUsers = [...jobData.data.attributes.applied_users.data, userId];
+
+//     // Update the job with the new applied_users array
+//     const updateResponse = await axiosClient.put(`/jobs/${jobId}`, {
+//       data: {
+//         applied_users: updatedAppliedUsers,
+//       },
+//     }, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     console.log('Updated job with applied users: ', updateResponse.data);
+//     return updateResponse.data;
+
+//   } catch (error) {
+//     console.error('Error applying to job: ', error);
+//   }
+// };
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// const applyForJob = async (jobId, companyId,userId, token) => {
+//   try {
+  
+//     // Log jobId and userId to check if they are being passed correctly
+//     console.log("Job ID:", jobId);
+//     console.log("CompanyID", companyId);
+//     console.log("User ID:", userId);
+//     console.log("Token:", token);
+  
+//     const response = await axiosClient.post('/job-applications', {
+//       data: {
+//         jobs: {id: jobId},
+//         status: 'applied',
+//         company: {id: companyId},
+//         users_permissions_user: {id: userId}
+//       }
+//     }, {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
+    
+//     console.log("Job application successful:", response);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error applying for job:", error);
+//     throw error;
+//   }
+// };
 
   const getUserCompany = async (userId, token) => {
   const response = await axiosClient.get(`/users/${userId}?populate=company`, {
@@ -114,22 +195,39 @@ const applyForJob = async (jobId, companyId,userId, token) => {
   return response.data;
 };
 
+
 const getAppliedJobs = async (userId, token) => {
   try {
-    const response = await axiosClient.get(`/job-applications?filters[users_permissions_user][$eq]=${userId}&populate=*`, {
+    const response = await axiosClient.get(`/jobs?filters[applied_users][id][$eq]=${userId}&populate=applied_jobs&populate=firm`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
-
-    console.log("Fetched applied jobs:", response.data);
-    
-    return response.data;
+    console.log('Applied Jobs: ', response.data);
+    return response.data;  // Returns the list of jobs applied to by the user
   } catch (error) {
-    console.error("Error fetching applied jobs:", error);
+    console.error('Error fetching applied jobs: ', error);
     throw error;
   }
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// const getAppliedJobs = async (userId, token) => {
+//   try {
+//     const response = await axiosClient.get(`/job-applications?filters[users_permissions_user][$eq]=${userId}&populate=*`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
+
+//     console.log("Fetched applied jobs:", response.data);
+    
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching applied jobs:", error);
+//     throw error;
+//   }
+// };
 
 const registerCompany = async (name, address, location, userId, token) => {
   try {
@@ -146,7 +244,7 @@ const registerCompany = async (name, address, location, userId, token) => {
         name: name,
         address: address,
         location: location,
-        users_permissions_user:{
+        owner:{
           id: userId
         }
           // Associate the company with the logged-in user
@@ -189,7 +287,7 @@ const addJob = async (title, salary, expiaryDate, jobType, education, experience
         jobType: jobType,
         education: education,
         experience: experience,
-        user: { id: userId },
+        author: { id: userId },
         firm: { id: companyId },
       }
     }, {
@@ -208,7 +306,6 @@ const addJob = async (title, salary, expiaryDate, jobType, education, experience
 };
 
 const getUserPostedJobs = async (userId, token) => {
-  debugger
   const response = await axiosClient.get(`/users/${userId}?populate=jobs`, {
     
     headers: {
@@ -218,6 +315,7 @@ const getUserPostedJobs = async (userId, token) => {
   console.log("getUserJobs Response: ", response); // Log full response if needed
   const jobsData = response.data.jobs; // Access jobs from the response
   console.log("Jobs Posted by User: ", jobsData);
+  
 
   return jobsData;  // Return the jobs data directly
 };
@@ -231,8 +329,16 @@ const getJobApplications = async (jobId, token) => {
       },
     });
     
-    console.log("Job Applications Data: ", response.data);
-    return response.data;
+    // console.log("Job Applications Data: ", response.data);
+    // return response?.data?.data?.attributes?.job_applications?.data;
+    // return response.data.attributes.job_application.data[0];
+    return response.data.data.attributes.job_application.data.map(job => 
+      {
+        console.log(job.attributes.owner.data.attributes)
+        return job.attributes.owner.data.attributes;
+      }
+    );
+    // debugger
   } catch (error) {
     console.error("Error fetching job applications: ", error);
     throw error;

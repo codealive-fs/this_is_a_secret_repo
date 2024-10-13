@@ -1,71 +1,120 @@
 "use client";
 
 import { useEffect, useState, useContext } from "react";
-import GlobalAPI from "../_utils/GlobalApi"; // Import GlobalAPI
+import GlobalAPI from "../_utils/GlobalApi";
 import { AuthContext } from "../_context/AuthContext";
 
 function AppliedJobs() {
-  const { user, token } = useContext(AuthContext); // Get logged-in user and token
+  const { user, token } = useContext(AuthContext);
   const [appliedJobs, setAppliedJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user && token) {
-      // Fetch applied jobs for the logged-in user
       GlobalAPI.getAppliedJobs(user.id, token)
         .then((data) => {
-          setAppliedJobs(data.data); // Assuming response structure is { data: [...] }
-          
-          setLoading(false);
+          setAppliedJobs(data.data);
         })
         .catch((error) => {
           console.error("Error fetching applied jobs:", error);
-          setLoading(false);
         });
-      }
-    }, [token]);
-    console.log(appliedJobs);
-  
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (appliedJobs.length === 0) {
-    return <div>No applied jobs yet.</div>;
-  }
+    }
+  }, [token]);
 
   return (
-    <div>
-      <h1>Your Applied Jobs</h1>
-      <ul>
-        {appliedJobs.map((application) => {
-          // const { status, jobs, company } = application.attributes;
-          const job = application.attributes; // Access the job attributes
-          // const job1 = application.attributes.company.data[0].attributes;
-          console.log("JOBS---->",job);
-          
-          return (
-            <li key={application.id}>
-              {job ? (
-                <>
-                  <h3>{job?.jobs?.data?.attributes?.title}</h3>
-                  <p>Company: {job?.company?.data?.attributes?.name}</p>
-                  <p>Location: {job?.jobs?.data?.attributes?.location}</p>
-                  <p>Status: {application?.attributes?.status}</p>
-                </>
-              ) : (
-                <p>Job information is not available.</p>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-3xl font-semibold mb-6 text-center">Your Applied Jobs</h1>
+
+      {appliedJobs.length === 0 ? (
+        <div className="text-center text-lg">No applied jobs yet.</div>
+      ) : (
+        <ul className="space-y-4">
+          {appliedJobs.map((job) => {
+            const jobAttributes = job.attributes;
+            const firmAttributes = jobAttributes?.firm?.data?.attributes;
+
+            return (
+              <li
+                key={job.id}
+                className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
+                <h3 className="text-xl font-bold">{jobAttributes.title}</h3>
+                <p className="text-gray-700">Salary: {jobAttributes.salary}</p>
+                <p className="text-gray-700">Firm: {firmAttributes?.name}</p>
+                <p className="text-gray-700">Location: {firmAttributes?.location}</p>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
 
 export default AppliedJobs;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// "use client";
+
+// import { useEffect, useState, useContext } from "react";
+// import GlobalAPI from "../_utils/GlobalApi"; // Import GlobalAPI
+// import { AuthContext } from "../_context/AuthContext";
+
+// function AppliedJobs() {
+//   const { user, token } = useContext(AuthContext); // Get logged-in user and token
+//   const [appliedJobs, setAppliedJobs] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     if (user && token) {
+//       // Fetch applied jobs for the logged-in user
+//       GlobalAPI.getAppliedJobs(user.id, token)
+//         .then((data) => {
+//           setAppliedJobs(data.data); // Assuming response structure is { data: [...] }
+//           setLoading(false);
+//         })
+//         .catch((error) => {
+//           console.error("Error fetching applied jobs:", error);
+//           setLoading(false);
+//         });
+//     }
+//   }, [token]);
+
+//   if (loading) {
+//     return <div className="text-center text-lg">Loading...</div>;
+//   }
+
+//   if (appliedJobs.length === 0) {
+//     return <div className="text-center text-lg">No applied jobs yet.</div>;
+//   }
+
+//   return (
+//     <div className="max-w-4xl mx-auto p-6">
+//       <h1 className="text-3xl font-semibold mb-6 text-center">Your Applied Jobs</h1>
+//       <ul className="space-y-4">
+//         {appliedJobs.map((job) => {
+//           const jobAttributes = job.attributes;
+//           const firmAttributes = jobAttributes?.firm?.data?.attributes;
+
+//           return (
+
+//             <li
+//               key={job.id}
+//               className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+//             >
+//               <h3 className="text-xl font-bold">{jobAttributes.title}</h3>
+//               <p className="text-gray-700">Salary: {jobAttributes.salary}</p>
+//               <p className="text-gray-700">Firm: {firmAttributes?.name}</p>
+//               <p className="text-gray-700">Location: {firmAttributes?.location}</p>
+//             </li>
+//           );
+//         })}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// export default AppliedJobs;
 
 
 

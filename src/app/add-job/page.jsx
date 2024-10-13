@@ -52,7 +52,7 @@ export default function AddJob() {
     
 
 const getUserCompany = async (userId, token) => {
-    // debugger
+    debugger
     try {
       const response = await GlobalApi.getUserCompany(userId, token);
 
