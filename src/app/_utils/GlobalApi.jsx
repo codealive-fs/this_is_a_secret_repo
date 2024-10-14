@@ -267,16 +267,6 @@ const registerCompany = async (name, address, location, userId, token) => {
 
 const addJob = async (title, salary, expiaryDate, jobType, education, experience, companyId, userId, token) => {
   try {
-    // Log job data for debugging
-    console.log("Job Title:", title);
-    console.log("Salary:", salary);
-    console.log("Expiary Date:", expiaryDate);
-    console.log("Job Type:", jobType);
-    console.log("Education:", education);
-    console.log("Experience:", experience);
-    console.log("company ID:", companyId);
-    console.log("User ID:", userId);
-    console.log("Token:", token);
 
     // API call to add the job
     const response = await axiosClient.post('/jobs', {
@@ -305,47 +295,53 @@ const addJob = async (title, salary, expiaryDate, jobType, education, experience
   }
 };
 
+
 const getUserPostedJobs = async (userId, token) => {
-  const response = await axiosClient.get(`/users/${userId}?populate=jobs`, {
+  const response = await axiosClient.get(`/users/${userId}?populate=jobs&populate=company`, {
     
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log("getUserJobs Response: ", response); // Log full response if needed
-  const jobsData = response.data.jobs; // Access jobs from the response
+  console.log("getUserJobs Response: ", response.data); // Log full response if needed
+  const jobsData = response.data; // Access jobs from the response
   console.log("Jobs Posted by User: ", jobsData);
   
-
+  
   return jobsData;  // Return the jobs data directly
 };
 
 
-const getJobApplications = async (jobId, token) => {
+
+
+const editJob = async (jobId, title, salary, expiaryDate, jobType, education, experience, companyId, userId, token) => {
   try {
-    const response = await axiosClient.get(`/jobs/${jobId}?populate[0]=job_application&populate[job_application][populate]=users_permissions_user`, {
+    // API call to update the job
+    const response = await axiosClient.put(`/jobs/${jobId}`, {
+      data: {
+        title: title,
+        salary: salary,
+        expiary_date: expiaryDate,
+        jobType: jobType,
+        education: education,
+        experience: experience,
+        author: { id: userId },  // Update author relation
+        firm: { id: companyId },  // Update firm relation
+      }
+    }, {
       headers: {
         Authorization: `Bearer ${token}`,
-      },
-    });
-    
-    // console.log("Job Applications Data: ", response.data);
-    // return response?.data?.data?.attributes?.job_applications?.data;
-    // return response.data.attributes.job_application.data[0];
-    return response.data.data.attributes.job_application.data.map(job => 
-      {
-        console.log(job.attributes.owner.data.attributes)
-        return job.attributes.owner.data.attributes;
+        'Content-Type': 'application/json',
       }
-    );
-    // debugger
+    });
+
+    console.log("Job updated successfully:", response.data);
+    return response.data;
   } catch (error) {
-    console.error("Error fetching job applications: ", error);
+    console.error("Error updating job:", error);
     throw error;
   }
 };
-
-
 
 export default{
   getJobs,
@@ -359,7 +355,7 @@ export default{
   registerCompany,
   addJob,
   getUserPostedJobs,
-  getJobApplications,
+  editJob,
 };
 
 
@@ -368,13 +364,36 @@ export default{
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// const getJobApplications = async (jobId, token) => {
+//   try {
+  //     const response = await axiosClient.get(`/jobs/${jobId}?populate[0]=job_application&populate[job_application][populate]=users_permissions_user`, {
+    //       headers: {
+      //         Authorization: `Bearer ${token}`,
+      //       },
+//     });
+    
+//     // console.log("Job Applications Data: ", response.data);
+//     // return response?.data?.data?.attributes?.job_applications?.data;
+//     // return response.data.attributes.job_application.data[0];
+//     return response.data.data.attributes.job_application.data.map(job => 
+//       {
+//         console.log(job.attributes.owner.data.attributes)
+//         return job.attributes.owner.data.attributes;
+//       }
+//     );
+//     // debugger
+//   } catch (error) {
+//     console.error("Error fetching job applications: ", error);
+//     throw error;
+//   }
+// };
 
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // const addJob = async (e) => {
-//   e.preventDefault();
+  //   e.preventDefault();
 //   setLoading(true);
 //   setError("");
 
@@ -382,7 +401,7 @@ export default{
 //     const response = await fetch('/api/add-job', {
 //       method: 'POST',
 //       headers: {
-//         'Content-Type': 'application/json',
+  //         'Content-Type': 'application/json',
 //       },
 //       body: JSON.stringify(formData),
 //     });
@@ -401,7 +420,7 @@ export default{
 //     setError(error.message || "An error occurred while adding the job.");
 //     toast.error(error.message || "An error occurred while adding the job.");
 //   } finally {
-//     setLoading(false);
+  //     setLoading(false);
 //   }
 // };
 
@@ -409,7 +428,7 @@ export default{
 
 // Update user profile
 // const updateUserProfile = async (userId, updatedData, token) => {
-//     try {
+  //     try {
   //       const resp = await axiosClient.put(`/users/${userId}`, updatedData, {
 //         headers: {
   //           Authorization: `Bearer ${token}`,
@@ -419,19 +438,19 @@ export default{
 //       return resp.data;
 //     } catch (error) {
   //       console.error("Error updating user profile:", error);
-//       throw error;
-//     }
-//   };
-
-
-
-
-
-
-// Update user profile including CV upload
-// const updateUserProfile = async (userId, updatedData, token) => {
-//   console.log("updatedData", updatedData);
+  //       throw error;
+  //     }
+  //   };
   
+  
+  
+  
+
+  
+  // Update user profile including CV upload
+  // const updateUserProfile = async (userId, updatedData, token) => {
+//   console.log("updatedData", updatedData);
+
 //   try {
 //     // Create FormData to handle text fields and file uploads
 //     const formData = new FormData();
@@ -442,25 +461,25 @@ export default{
 
 //     // Check if a CV file is present and append it
 //     if (updatedData.cv) {
-//       formData.append('cv', updatedData.cv);  // 'cv' is the name for the CV field in Strapi
-//     }
-
-//     // Log each FormData field to check what's being sent
-//     for (const [key, value] of formData.entries()) {
+  //       formData.append('cv', updatedData.cv);  // 'cv' is the name for the CV field in Strapi
+  //     }
+  
+  //     // Log each FormData field to check what's being sent
+  //     for (const [key, value] of formData.entries()) {
 //       console.log(`${key}:`, value);
 //     }
 //     // Make PUT request to update user with authorization token
 //     console.log("formData", updatedData);
 //     const resp = await axiosClient.put(`/users/${userId}`, updatedData, {
 //       headers: {
-//         'Authorization': `Bearer ${token}`,
-//         'Content-Type': 'multipart/form-data'  // Specify this to handle file upload
-//       },
-//     });
-    
-//     console.log("User profile updated successfully:", resp);
-//     return resp.data;
-//   } catch (error) {
+  //         'Authorization': `Bearer ${token}`,
+  //         'Content-Type': 'multipart/form-data'  // Specify this to handle file upload
+  //       },
+  //     });
+  
+  //     console.log("User profile updated successfully:", resp);
+  //     return resp.data;
+  //   } catch (error) {
 //     console.error("Error updating user profile:", error);
 //     throw error;
 //   }
@@ -472,7 +491,7 @@ export default{
 //     let queryString = `/jobs?populate=*`;
 //     // If a keyword is provided, add it to the query string
 //     if (keyword) {
-//       queryString += `&filters[title][$containsi]=${keyword}`;
+  //       queryString += `&filters[title][$containsi]=${keyword}`;
 //     }
 //     const resp = await axiosClient.get(queryString);
 //     return resp.data;

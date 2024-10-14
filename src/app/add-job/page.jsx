@@ -14,7 +14,7 @@ const educationTypes = [
   "BSc. 2 Year Associate Degree",
   "Bachelors in CS/SE",
   "Bachelors in Business Administration",
-  "Masters in Business Administration",
+  "Masters in Busniess Administration",
   "Bachelors in Project Management",
 ];
 const experienceLevels = ["Junior", "Mid-Level", "Senior"];
@@ -52,7 +52,6 @@ export default function AddJob() {
     
 
 const getUserCompany = async (userId, token) => {
-    debugger
     try {
       const response = await GlobalApi.getUserCompany(userId, token);
 
