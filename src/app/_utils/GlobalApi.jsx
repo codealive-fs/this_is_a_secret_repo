@@ -311,9 +311,6 @@ const getUserPostedJobs = async (userId, token) => {
   return jobsData;  // Return the jobs data directly
 };
 
-
-
-
 const editJob = async (jobId, title, salary, expiaryDate, jobType, education, experience, companyId, userId, token) => {
   try {
     // API call to update the job
@@ -343,6 +340,23 @@ const editJob = async (jobId, title, salary, expiaryDate, jobType, education, ex
   }
 };
 
+const deleteJob = async (jobId, token) => {
+  try {
+    const response = await axiosClient.delete(`/jobs/${jobId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Job deleted successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    throw error;
+  }
+};
+
+
+
 export default{
   getJobs,
   registerUser,
@@ -356,6 +370,7 @@ export default{
   addJob,
   getUserPostedJobs,
   editJob,
+  deleteJob,
 };
 
 

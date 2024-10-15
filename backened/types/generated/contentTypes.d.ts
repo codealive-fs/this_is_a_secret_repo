@@ -388,11 +388,6 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
-    job_applications: Attribute.Relation<
-      'api::company.company',
-      'oneToMany',
-      'api::job-application.job-application'
-    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -450,11 +445,6 @@ export interface ApiJobJob extends Schema.CollectionType {
       'manyToOne',
       'api::company.company'
     >;
-    job_application: Attribute.Relation<
-      'api::job.job',
-      'oneToMany',
-      'api::job-application.job-application'
-    >;
     applied_users: Attribute.Relation<
       'api::job.job',
       'manyToMany',
@@ -471,53 +461,6 @@ export interface ApiJobJob extends Schema.CollectionType {
     createdBy: Attribute.Relation<'api::job.job', 'oneToOne', 'admin::user'> &
       Attribute.Private;
     updatedBy: Attribute.Relation<'api::job.job', 'oneToOne', 'admin::user'> &
-      Attribute.Private;
-  };
-}
-
-export interface ApiJobApplicationJobApplication extends Schema.CollectionType {
-  collectionName: 'job_applications';
-  info: {
-    singularName: 'job-application';
-    pluralName: 'job-applications';
-    displayName: 'job-application';
-    description: '';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    status: Attribute.Enumeration<['applied']>;
-    users_permissions_user: Attribute.Relation<
-      'api::job-application.job-application',
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-    jobs: Attribute.Relation<
-      'api::job-application.job-application',
-      'manyToOne',
-      'api::job.job'
-    >;
-    slug: Attribute.UID;
-    company: Attribute.Relation<
-      'api::job-application.job-application',
-      'manyToOne',
-      'api::company.company'
-    >;
-    createdAt: Attribute.DateTime;
-    updatedAt: Attribute.DateTime;
-    publishedAt: Attribute.DateTime;
-    createdBy: Attribute.Relation<
-      'api::job-application.job-application',
-      'oneToOne',
-      'admin::user'
-    > &
-      Attribute.Private;
-    updatedBy: Attribute.Relation<
-      'api::job-application.job-application',
-      'oneToOne',
-      'admin::user'
-    > &
       Attribute.Private;
   };
 }
@@ -936,11 +879,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'api::job.job'
     >;
     cv: Attribute.Media<'files'>;
-    job_applications: Attribute.Relation<
-      'plugin::users-permissions.user',
-      'oneToMany',
-      'api::job-application.job-application'
-    >;
     photo: Attribute.Media<'images'>;
     fullName: Attribute.String;
     applied_jobs: Attribute.Relation<
@@ -982,7 +920,6 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::company.company': ApiCompanyCompany;
       'api::job.job': ApiJobJob;
-      'api::job-application.job-application': ApiJobApplicationJobApplication;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;

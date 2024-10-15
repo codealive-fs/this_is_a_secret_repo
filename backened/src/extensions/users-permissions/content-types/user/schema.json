@@ -79,12 +79,6 @@
         "files"
       ]
     },
-    "job_applications": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::job-application.job-application",
-      "mappedBy": "users_permissions_user"
-    },
     "photo": {
       "type": "media",
       "multiple": false,

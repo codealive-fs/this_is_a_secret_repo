@@ -77,12 +77,6 @@
       "target": "api::company.company",
       "inversedBy": "jobs"
     },
-    "job_application": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::job-application.job-application",
-      "mappedBy": "jobs"
-    },
     "applied_users": {
       "type": "relation",
       "relation": "manyToMany",
