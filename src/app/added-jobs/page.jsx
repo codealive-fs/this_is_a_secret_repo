@@ -187,8 +187,8 @@ function AddedJobs() {
                          <AlertDialogCancel onClick={() => setOpenAlertDialog(false)}>
                            Cancel
                          </AlertDialogCancel>
-                         <AlertDialogAction onClick={confirmDelete}>
-                           Continue
+                         <AlertDialogAction onClick={confirmDelete} className="bg-red-800 text-white hover:bg-red-900 focus:ring-red-500">
+                            Remove
                          </AlertDialogAction>
                        </AlertDialogFooter>
                      </AlertDialogContent>
