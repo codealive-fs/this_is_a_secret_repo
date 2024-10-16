@@ -355,6 +355,20 @@ const deleteJob = async (jobId, token) => {
   }
 };
 
+const getAppliedUsers = async (jobId, token) => {
+  try {
+    const response = await axiosClient.get(`/jobs/${jobId}?populate=applied_users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log('Users Applied: ', response.data);
+    return response.data;  // Returns the list of jobs applied to by the user
+  } catch (error) {
+    console.error('Error fetching applied jobs: ', error);
+    throw error;
+  }
+};
 
 
 export default{
@@ -371,6 +385,7 @@ export default{
   getUserPostedJobs,
   editJob,
   deleteJob,
+  getAppliedUsers,
 };
 
 

@@ -16,7 +16,7 @@ function SignIn() {
   const router = useRouter();
 
   useEffect(() => {
-    const jwt = sessionStorage.getItem('jwt');
+    const jwt = localStorage.getItem('jwt');
     if(jwt){
       router.push('/')
     }
@@ -25,8 +25,8 @@ function SignIn() {
   const onSignIn = () => {
     GlobalApi.signIn(email, password).then(resp => {
       console.log(resp);
-      sessionStorage.setItem("user", JSON.stringify(resp?.data?.user))
-      sessionStorage.setItem("jwt", resp?.data?.jwt);
+      localStorage.setItem("user", JSON.stringify(resp?.data?.user))
+      localStorage.setItem("jwt", resp?.data?.jwt);
       toast("Login Successfully!");
       
       // Dispatch custom event after successful login

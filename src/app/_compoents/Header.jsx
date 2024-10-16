@@ -18,9 +18,11 @@ export default function Header() {
   // const { user, logout, token, loading } = useContext(AuthContext);
   
   const [hasCompany, setHasCompany] = useState(false);
-  
-  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(sessionStorage.getItem("user"));
   // console.log("user", user, "token", token);
+  
   useEffect(() => {
     // Check if the logged-in user has a registered company
 
@@ -43,8 +45,8 @@ export default function Header() {
   }, [token]);
   
   const logout = () => {
-        sessionStorage.removeItem("user");
-        sessionStorage.removeItem("jwt");
+        localStorage.removeItem("user");
+        localStorage.removeItem("jwt");
         // setUser(null);
         setToken(null);
     

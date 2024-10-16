@@ -31,8 +31,8 @@ export default function AddJob() {
   
   const router = useRouter();
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const token = sessionStorage.getItem("jwt");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("jwt");
   useEffect(() => {
     
     if (user && token) {
@@ -68,8 +68,8 @@ const getUserCompany = async (userId, token) => {
   };
   
   const onAddJob = async () => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    const token = sessionStorage.getItem("jwt");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("jwt");
     const userId = user?.id;
 
     setLoading(true);

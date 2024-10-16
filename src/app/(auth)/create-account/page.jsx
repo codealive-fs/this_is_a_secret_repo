@@ -18,7 +18,7 @@ function CreateAccount() {
 
     
     useEffect(() => {
-        const jwt = sessionStorage.getItem('jwt');
+        const jwt = localStorage.getItem('jwt');
             if(jwt){
                     router.push('/')
                 }
@@ -29,8 +29,8 @@ function CreateAccount() {
  // Log data object if it exists
             console.log(resp?.data?.user);  // This may or may not exist based on API response
             console.log(resp?.data?.jwt);
-            sessionStorage.setItem("user", JSON.stringify(resp?.data?.user))
-            sessionStorage.setItem("jwt", resp?.data?.jwt);
+            localStorage.setItem("user", JSON.stringify(resp?.data?.user))
+            localStorage.setItem("jwt", resp?.data?.jwt);
             toast("Account created Successfully!");
 
             router.push('/');        

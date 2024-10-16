@@ -39,8 +39,9 @@ export default function Hero() {
   });
   const [searchQuery, setSearchQuery] = useState({ keyword: "", location: "" });
 
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      const token = sessionStorage.getItem("jwt");
+  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(sessionStorage.getItem("user"));
+      const token = localStorage.getItem("jwt");
       // console.log("user", user.id, "token");
       
   useEffect(() => {

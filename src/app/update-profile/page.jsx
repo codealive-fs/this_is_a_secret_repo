@@ -14,7 +14,7 @@ export default function UpdateProfile() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setUsername(user.username);
       setEmail(user.email);
@@ -31,8 +31,8 @@ export default function UpdateProfile() {
 
   const onUpdateProfile = async () => {
     setLoading(true);
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    const token = sessionStorage.getItem("jwt");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("jwt");
     const userId = user?.id;
 
     try {
@@ -54,7 +54,7 @@ export default function UpdateProfile() {
 
       // Call the API to update user profile
       const updatedUser = await GlobalApi.updateUserProfile(userId, updatedData, token);
-      sessionStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       toast("Profile updated successfully!");
       router.push("/");
     } catch (error) {

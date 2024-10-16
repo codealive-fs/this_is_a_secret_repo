@@ -28,13 +28,13 @@ export default function RootLayout({ children }) {
     else setThisToken(false);
   }
   const setUser = () => {
-    const isUser = JSON.parse(sessionStorage.getItem("user"));
+    const isUser = JSON.parse(localStorage.getItem("user"));
     if (isUser) setThisUser(isUser)
       else setThisUser(null)
   }
   
   useEffect(() => {
-    const jwt = sessionStorage.getItem('jwt');
+    const jwt = localStorage.getItem('jwt');
     if (jwt) {
       setToken(jwt)
       setUser();
