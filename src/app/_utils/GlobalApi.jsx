@@ -362,8 +362,8 @@ const getAppliedUsers = async (jobId, token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('Users Applied: ', response.data);
-    return response.data;  // Returns the list of jobs applied to by the user
+    console.log('Users Applied: ', response?.data);
+    return response?.data;  // Returns the list of jobs applied to by the user
   } catch (error) {
     console.error('Error fetching applied jobs: ', error);
     throw error;

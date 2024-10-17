@@ -25,6 +25,7 @@ function AddedJobs() {
   const [editingJob, setEditingJob] = useState(null); // Track which job is being edited
   const [userCompanyId, setUserCompanyId] = useState(null); // Store the user's companyId
   const [selectedJob, setSelectedJob] = useState(null);
+  const [appliedUsers, setAppliedUsers] = useState([]); // State to hold the applied users
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +39,7 @@ function AddedJobs() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("jwt");
+
 
   useEffect(() => {
     const getPostedJobs = async () => {
@@ -56,81 +58,93 @@ function AddedJobs() {
     getPostedJobs();
   }, [token]);
 
+  const handleViewAppliedUsersClick = async (job) => {
+    setSelectedJob(job);
+    // Fetch the list of applied users for this job                       
+    try {
+      const response = await GlobalAPI.getAppliedUsers(job.id, token); // Call the API to get applied users
+      const appliedUsers = response?.data?.attributes?.applied_users?.data
+      console.log("response's Array=======>", appliedUsers);
+      setAppliedUsers(appliedUsers); // Assuming the response contains an array of applied users
+    } catch (error) {
+      console.error("Error fetching applied users:", error);
+    }
+  };
+
   const handleDeleteClick = (job) => {
     setSelectedJob(job);
     setOpenAlertDialog(true);  // Open the Alert Dialog
   };
 
-  const confirmDelete = async () => {
-    const token = localStorage.getItem("jwt");
-    if (selectedJob) {
-      try {
-        await GlobalAPI.deleteJob(selectedJob.id, token);
-        toast.success("Job deleted successfully!");
-        setPostedJobs((prevJobs) => prevJobs.filter((job) => job.id !== selectedJob.id));
-      } catch (error) {
-        toast.error("Failed to delete job.");
-        console.error("Error deleting job:", error);
-      } finally {
-        setOpenAlertDialog(false); // Close the Alert Dialog after delete
-      }
+const confirmDelete = async (token) => {
+  if (selectedJob) {
+    try {
+      await GlobalAPI.deleteJob(selectedJob.id, token);
+      toast.success("Job deleted successfully!");
+      setPostedJobs((prevJobs) => prevJobs.filter((job) => job.id !== selectedJob.id));
+    } catch (error) {
+      toast.error("Failed to delete job.");
+      console.error("Error deleting job:", error);
+    } finally {
+      setOpenAlertDialog(false); // Close the Alert Dialog after delete
     }
-  };
+  }
+};
 
-  const handleEditClick = (job) => {
-    setEditingJob(job.id); // Set the current job being edited
-    setFormData({
-      title: job.title,
-      salary: job.salary,
-      expiaryDate: job.expiaryDate,
-      jobType: job.jobType,
-      education: job.education,
-      experience: job.experience
-    });
-  };
+const handleEditClick = (job) => {
+  setEditingJob(job.id); // Set the current job being edited
+  setFormData({
+    title: job.title,
+    salary: job.salary,
+    expiaryDate: job.expiaryDate,
+    jobType: job.jobType,
+    education: job.education,
+    experience: job.experience
+  });
+};
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setFormData({
+    ...formData,
+    [name]: value
+  });
+};
 
-  const handleSelectChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
+const handleSelectChange = (name, value) => {
+  setFormData({
+    ...formData,
+    [name]: value
+  });
+};
 
-  const handleUpdateJob = async () => {
-    if (editingJob && token && userCompanyId) {
-      setLoading(true);
-      try {
-        await GlobalAPI.editJob(
-          editingJob, 
-          formData.title, 
-          formData.salary, 
-          formData.expiaryDate, 
-          formData.jobType, 
-          formData.education, 
-          formData.experience, 
-          userCompanyId, 
-          user.id, 
-          token
-        );
-        toast.success("Job updated successfully!");
-        setEditingJob(null); // Close the dialog after updating
-        setLoading(false);
-        // Optionally re-fetch posted jobs or update the UI
-      } catch (error) {
-        toast.error("Error updating job.");
-        console.error("Error updating job:", error);
-        setLoading(false);
-      }
+const handleUpdateJob = async () => {
+  if (editingJob && token && userCompanyId) {
+    setLoading(true);
+    try {
+      await GlobalAPI.editJob(
+        editingJob, 
+        formData.title, 
+        formData.salary, 
+        formData.expiaryDate, 
+        formData.jobType, 
+        formData.education, 
+        formData.experience, 
+        userCompanyId, 
+        user.id, 
+        token
+      );
+      toast.success("Job updated successfully!");
+      setEditingJob(null); // Close the dialog after updating
+      setLoading(false);
+      // Optionally re-fetch posted jobs or update the UI
+    } catch (error) {
+      toast.error("Error updating job.");
+      console.error("Error updating job:", error);
+      setLoading(false);
     }
-  };
+  }
+};
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -149,17 +163,14 @@ function AddedJobs() {
                     {/* DialogTrigger to open edit dialog */}
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button 
-                          onClick={() => handleEditClick(job)} 
-                          className="flex items-center text-black hover:text-zinc-900"
-                        >
+                    {/* ------------------------------EDIT BUTTON (Dialog)------------------------------ */}
+                        <button onClick={() => handleEditClick(job)} className="flex items-center text-black hover:text-zinc-900">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-edit">
                             <path d="M12 20h9"></path>
                             <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
                           </svg>
                         </button>
                       </DialogTrigger>
-
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Edit Job</DialogTitle>
@@ -225,7 +236,44 @@ function AddedJobs() {
                         </form>
                       </DialogContent>
                     </Dialog>
+                    {/* ------------------------------APPLIED USERS BUTTON (Dialog)------------------------------ */}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                         <button onClick={() => handleViewAppliedUsersClick(job)}>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
+                                   <path d="M2.5 12C2.5 7.52166 2.5 5.28249 3.89124 3.89124C5.28249 2.5 7.52166 2.5 12 2.5C16.4783 2.5 18.7175 2.5 20.1088 3.89124C21.5 5.28249 21.5 7.52166 21.5 12C21.5 16.4783 21.5 18.7175 20.1088 20.1088C18.7175 21.5 16.4783 21.5 12 21.5C7.52166 21.5 5.28249 21.5 3.89124 20.1088C2.5 18.7175 2.5 16.4783 2.5 12Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                                   <path d="M11 7.5H17M8 7.5C8 7.77614 7.77614 8 7.5 8C7.22386 8 7 7.77614 7 7.5C7 7.22386 7.22386 7 7.5 7C7.77614 7 8 7.22386 8 7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                   <path d="M11 12H17M8 12C8 12.2761 7.77614 12.5 7.5 12.5C7.22386 12.5 7 12.2761 7 12C7 11.7239 7.22386 11.5 7.5 11.5C7.77614 11.5 8 11.7239 8 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                   <path d="M11 16.5H17M8 16.5C8 16.7761 7.77614 17 7.5 17C7.22386 17 7 16.7761 7 16.5C7 16.2239 7.22386 16 7.5 16C7.77614 16 8 16.2239 8 16.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                              </svg>
+                      </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Applied Users for {job.title}</DialogTitle>
+                          <DialogDescription>
+                            Below is the list of users who have applied for this job.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <ul className="mt-4">
+                          {appliedUsers.length > 0 ? (
+                            appliedUsers.map((user) => (
+                              <li key={user.id} className="text-gray-700">
+                                {user.attributes.fullName} - {user.attributes.email} -{user.attributes.username}
+                              </li>
+                            ))
+                          ) : (
+                            <li>No users have applied yet.</li>
+                          )}
+                        </ul>
+                      </DialogContent>
+                    </Dialog>
 
+
+
+
+
+                    {/* ------------------------------DELETE BUTTON (Alert)------------------------------ */}
                     <button onClick={() => handleDeleteClick(job)} >
                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#9b0014" fill="none">
                            <path d="M19.5 5.5L18.8803 15.5251C18.7219 18.0864 18.6428 19.3671 18.0008 20.2879C17.6833 20.7431 17.2747 21.1273 16.8007 21.416C15.8421 22 14.559 22 11.9927 22C9.42312 22 8.1383 22 7.17905 21.4149C6.7048 21.1257 6.296 20.7408 5.97868 20.2848C5.33688 19.3626 5.25945 18.0801 5.10461 15.5152L4.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
