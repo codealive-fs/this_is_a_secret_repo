@@ -6,6 +6,8 @@ import { useAuthContext } from "../_context/AuthContext"; // Import AuthContext 
 import { JobsContext } from "../_context/JobsContext";
 import { calculateJobStats } from "../_utils/statsUtils";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
+import { MapPin, Search } from 'lucide-react';
+import {Input} from '../../components/ui/input';
 
 export default function Hero() {
   
@@ -226,26 +228,29 @@ setJobStats(stats);
       <div className="lg:col-span-2">
         {/* Search form */}
         <form onSubmit={handleSearch} className="flex gap-2 mb-6 max-w-md mx-auto">
-          <input
-            name="keyword"
-            type="search"
-            className="border border-gray-400 rounded-md px-2 py-2 w-full"
-            placeholder="Job title or keyword.."
-            value={searchQuery.keyword}
-            onChange={handleSearchChange}
-            />
-          <input
-            name="location"
-            type="search"
-            className="border border-gray-400 rounded-md px-2 py-2 w-full"
-            placeholder="Location.."
-            value={searchQuery.location}
-            onChange={handleSearchChange}
-            />
-          <button className="bg-blue-600 text-white rounded-md px-4 py-2" type="submit">
-            Search
-          </button>
-        </form>
+            <div className='flex gap-3 items-center border rounded-full p-2'>
+               <Search />
+               <input
+                 name="keyword"
+                 type="search"
+                 className="outline-none"
+                 placeholder="Job title or keyword.."
+                 value={searchQuery.keyword}
+                 onChange={handleSearchChange}
+                 />
+            </div>
+            <div className='flex gap-3 items-center border rounded-full p-2'>
+                <MapPin />
+                <input
+                  name="location"
+                  type="search"
+                  className="outline-none"
+                  placeholder="Location.."
+                  value={searchQuery.location}
+                  onChange={handleSearchChange}
+                  />
+            </div>
+            </form>
         <div className="text-center mb-6">
                 <p>Total Jobs: {jobStats.totalJobs}</p>
                 <p>Average Salary: ${jobStats.averageSalary.toFixed(2)}</p>

@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import Image from "next/image";
 
 const jobTypes = ["Full-Time", "Part-Time", "Permanent", "Contractual"];
 const educationTypes = [
@@ -259,6 +260,13 @@ const handleUpdateJob = async () => {
                           {appliedUsers.length > 0 ? (
                             appliedUsers.map((user) => (
                               <li key={user.id} className="text-gray-700">
+                                <Image 
+                                    src={user?.attributes?.photo?.data?.attributes?.url}
+                                    alt={`${user.attributes.fullName}'s profile picture`}
+                                    unoptimized={true}
+                                    width={23}
+                                    height={23}
+                                    /> 
                                 {user.attributes.fullName} - {user.attributes.email} -{user.attributes.username}
                               </li>
                             ))

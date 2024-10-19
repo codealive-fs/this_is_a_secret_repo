@@ -51,19 +51,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-
-        <AuthProvider value={{ token, user, setToken, setUser }}>
-          <JobsProvider>
-            <div className="container">
-              <Header />
-            </div>
-            {children}
-            <Toaster />
-            <footer className="container p-6 text-gray-500">
-              Job Board &copy; 2024 - All rights reserved
-            </footer>
-          </JobsProvider>
-        </AuthProvider>
+          <AuthProvider value={{ token, user, setToken, setUser }}>
+            <JobsProvider>
+              <div className="md:px-16">
+                  <Header />
+                  {children}
+                  <Toaster />
+                  <footer className="container p-6 text-gray-500">
+                    Job Board &copy; 2024 - All rights reserved
+                  </footer>
+              </div>
+            </JobsProvider>
+          </AuthProvider>
       </body>
     </html>
   );

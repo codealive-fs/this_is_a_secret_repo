@@ -7,9 +7,9 @@ import { useRouter } from 'next/navigation'
 import { toast } from "sonner"
 import GlobalApi from '@/app/_utils/GlobalApi';
 import Link from "next/link"
+import { Label } from "@/components/ui/label"
 
 function CreateAccount() {
-
     const [username, setUsername] = useState();
     const [fullName, setFullName] = useState();
     const [email, setEmail] = useState();
@@ -51,7 +51,7 @@ function CreateAccount() {
                 <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' /> 
                 <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
                 <Button onClick={() => onCreateAccount()} >Submit</Button>
-                <p>Already have an Account 
+                <p>Already have an Account? 
                 <Link href={'/sign-in'} className="text-blue-700">
                     Click here to Sign In
                 </Link>

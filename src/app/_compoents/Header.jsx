@@ -10,10 +10,7 @@ import { useRouter } from 'next/navigation';
 
 
 export default function Header() {
-
   const router = useRouter();
-
-
   const {token, setToken} = useAuthContext();
   // const { user, logout, token, loading } = useContext(AuthContext);
   
@@ -49,24 +46,20 @@ export default function Header() {
         localStorage.removeItem("jwt");
         // setUser(null);
         setToken(null);
-    
         // Redirect to login page after logging out
         router.push("/sign-in");
       };
-    
-  
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
 
   return (
-
     <header>
-      <div className="container flex items-center justify-between my-4 mx-auto">
-        <Link href={"/"} className="font-bold text-lg">
+      {/* <div className=""> */}
+        <nav className="flex items-center justify-between gap-4 p-4 rounded-md shadow-md">
+        <Link href={"/"} className="font-bold text-lg ">
           Job Board
         </Link>
-        <nav className="flex gap-4 px-2 py-3 rounded-md">
           {!token ? (
             <Link href={"/sign-in"}>
               <Button>Login</Button>
@@ -74,34 +67,22 @@ export default function Header() {
           ) : (
             <>
               <h1>Welcome, {user.username ? user.username : "User"}!</h1>
-              <Link href="/update-profile">
-                <Button>Update Profile</Button>
-              </Link>
-
-              <Link href="/applied-jobs">
-                <Button>Applied Jobs</Button>
-              </Link>
-
+              <Link href="/update-profile" className="font-medium hover:text-gray-400">Update Profile</Link>
+              <Link href="/applied-jobs" className="font-medium hover:text-gray-400">Applied Jobs</Link>
               {/* Conditionally display the Add Job button */}
               {hasCompany ? (
                 <>
-                <Link href="/add-job">
-                  <Button>Add Job</Button>
-                </Link>
-                <Link href="/added-jobs">
-                  <Button>Added Jobs</Button>
-                </Link>
+                <Link href="/add-job" className="font-medium hover:text-gray-400">Add Job</Link>
+                <Link href="/added-jobs" className="font-medium hover:text-gray-400">Added Jobs</Link>
                 </>
               ) : (
-                <Link href="/register-company">
-                  <Button>Register Company</Button>
-                </Link>
+                <Link href="/register-company" className="font-medium hover:text-gray-400">Register Company</Link>
               )}
               <Button onClick={logout}>Logout</Button>
             </>
           )}
         </nav>
-      </div>
+      {/* </div> */}
     </header>
   );
 }
