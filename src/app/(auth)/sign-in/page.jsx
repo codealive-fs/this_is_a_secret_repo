@@ -4,10 +4,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {useState} from "react";
 import { useRouter } from 'next/navigation' 
-import GlobalApi from '@/app/_utils/GlobalApi';
+import GlobalApi from '../../_utils/GlobalApi';
 import { toast } from "sonner"
 import Link from "next/link"
-import { Passero_One } from 'next/font/google';
 
 function SignIn() {
 
@@ -55,7 +54,6 @@ function SignIn() {
                 <Link href={'/create-account'} className="text-blue-700">
                     Click here to Create an Account!
                 </Link>
-
               </p>
           </div>
       </div>

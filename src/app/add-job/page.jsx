@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import GlobalApi from "../_utils/GlobalApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
 
 const jobTypes = ["Full-Time", "Part-Time", "Permanent", "Contractual"];
 const educationTypes = [
@@ -26,7 +28,9 @@ export default function AddJob() {
   const [jobType, setJobType] = useState("");
   const [education, setEducation] = useState("");
   const [experience, setExperience] = useState("");
+  const [description, setDescription] = useState("");  // New state for description
   const [companyId, setCompanyId] = useState("");
+
   const [loading, setLoading] = useState(false);
   
   const router = useRouter();
@@ -41,15 +45,6 @@ export default function AddJob() {
       console.error("User or token not found in sessionStorage");
     }
  });
-    
-//  useEffect(() => {
-//   // Log the companyId to check if it's set correctly
-//   if (companyId) {
-//     console.log("Company ID in state:", companyId);
-//   }
-// }, [companyId]
-// )   
-    
 
 const getUserCompany = async (userId, token) => {
     try {
@@ -66,6 +61,12 @@ const getUserCompany = async (userId, token) => {
       toast.error("Failed to fetch company data.");
     }
   };
+  const formatDescription = (text) => {
+    return text.split("\n").map((paragraph) => ({
+      type: "paragraph",
+      children: [{ text: paragraph, type: "text" }]
+    }));
+  };
   
   const onAddJob = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -74,6 +75,7 @@ const getUserCompany = async (userId, token) => {
 
     setLoading(true);
     try {
+      const formattedDescription = formatDescription(description); // Format the description text
       const result = await GlobalApi.addJob(
         title,
         Number(salary),
@@ -81,10 +83,14 @@ const getUserCompany = async (userId, token) => {
         jobType,
         education,
         experience,
+        Array(formattedDescription),
         companyId,
         userId,
         token
       );
+      // debugger
+      console.log("description---------->", description);
+      
       toast.success("Job added successfully!");
       // router.push("/jobs");
     } catch (error) {
@@ -103,17 +109,18 @@ const getUserCompany = async (userId, token) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={(e) => { e.preventDefault(); onAddJob()}} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Job Title</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter job title"
-                required
+            <div className="grid w-full items-center gap-1.5">
+            <Label htmlFor="title">Job Title</Label>
+            <Input 
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter job title"
+              required
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="salary">Salary</Label>
               <Input
                 id="salary"
@@ -124,7 +131,7 @@ const getUserCompany = async (userId, token) => {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="expiaryDate">Expiry Date</Label>
               <Input
                 id="expiaryDate"
@@ -134,7 +141,7 @@ const getUserCompany = async (userId, token) => {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="jobType">Job Type</Label>
               <Select onValueChange={(value) => setJobType(value)} required>
                 <SelectTrigger>
@@ -147,7 +154,7 @@ const getUserCompany = async (userId, token) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="education">Education</Label>
               <Select onValueChange={(value) => setEducation(value)} required>
                 <SelectTrigger>
@@ -160,7 +167,7 @@ const getUserCompany = async (userId, token) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="experience">Experience Level</Label>
               <Select onValueChange={(value) => setExperience(value)} required>
                 <SelectTrigger>
@@ -172,6 +179,16 @@ const getUserCompany = async (userId, token) => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid w-full items-center gap-1.5">
+              <Label htmlFor="description">Job Description</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}  // Update description state
+                placeholder="Enter job description"
+                required
+              />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Adding Job..." : "Add Job"}

@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import { toast } from "sonner"
 import GlobalApi from '@/app/_utils/GlobalApi';
 import Link from "next/link"
-import { Label } from "@/components/ui/label"
 
 function CreateAccount() {
     const [username, setUsername] = useState();

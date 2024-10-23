@@ -55,9 +55,9 @@ export default function Header() {
 
   return (
     <header>
-      {/* <div className=""> */}
+     {/* <div className=""> */}
         <nav className="flex items-center justify-between gap-4 p-4 rounded-md shadow-md">
-        <Link href={"/"} className="font-bold text-lg ">
+        <Link href={"/"} className="font-bold text-lg text-purple-700">
           Job Board
         </Link>
           {!token ? (
@@ -82,8 +82,7 @@ export default function Header() {
             </>
           )}
         </nav>
-      {/* </div> */}
-    </header>
+        </header>
   );
 }
 

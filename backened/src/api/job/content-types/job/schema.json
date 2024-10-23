@@ -36,7 +36,7 @@
         "Contractual"
       ]
     },
-    "jobDescription": {
+    "description": {
       "type": "blocks"
     },
     "education": {

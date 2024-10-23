@@ -6,8 +6,8 @@ import { useAuthContext } from "../_context/AuthContext"; // Import AuthContext 
 import { JobsContext } from "../_context/JobsContext";
 import { calculateJobStats } from "../_utils/statsUtils";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
-import { MapPin, Search } from 'lucide-react';
-import {Input} from '../../components/ui/input';
+import { MapPin, Search, History } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   
@@ -21,8 +21,7 @@ export default function Hero() {
     minSalary: 0,
     maxSalary: 0,
   });
-  const [appliedJobs, setAppliedJobs] = useState([]);
-
+  
   const [filters, setFilters] = useState({
     fullTime: false,
     partTime: false,
@@ -40,27 +39,30 @@ export default function Hero() {
     maxSalary: "",
   });
   const [searchQuery, setSearchQuery] = useState({ keyword: "", location: "" });
+  const [appliedJobs, setAppliedJobs] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  // const user = JSON.parse(sessionStorage.getItem("user"));
-      const token = localStorage.getItem("jwt");
-      // console.log("user", user.id, "token");
+  const token = localStorage.getItem("jwt");
+
       
   useEffect(() => {
     applyFilters();
   }, [filters, searchQuery, jobList]);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // useEffect(() => {
-  //   if (user && token) {
-  //     // Fetch the jobs the user has already applied for
-  //     GlobalAPI.getAppliedJobs(user.id, token)
-  //       .then((response) => {
-  //         const appliedJobIds = response.data.map((jobs) => jobs.attributes.job.data.id);
-  //         setAppliedJobs(appliedJobIds); // Save the applied job IDs to state
-  //       })
-  //       .catch((error) => console.error("Error fetching applied jobs:", error));
-  //   }
-  // }, [user, token]);
+
+  useEffect(() => {
+    if (user && token) {
+      // Fetch the jobs the user has already applied for
+      GlobalAPI.getAppliedJobs(user.id, token)
+        .then((response) => {
+          console.log("response----------->", response);
+          const appliedJobIds = response.data.map((jobs) => jobs.id);
+          
+          setAppliedJobs(appliedJobIds); // Save the applied job IDs to state
+          // debugger
+        })
+        .catch((error) => console.error("Error fetching applied jobs:", error));
+    }
+  }, [user, token]);
 
 
   const applyForJob = async (jobId) => {
@@ -81,28 +83,6 @@ export default function Hero() {
   };
   console.log(appliedJobs);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // const applyForJob = async (jobId, companyId) => {
-    //   console.log("companyID----->", companyId);
-      
-    //   if (!user || !token) {
-    //     alert("You must be logged in to apply.");
-    //     return;
-    //   }
-  
-    //   try {
-    //     await GlobalAPI.applyForJob(jobId, companyId, user.id, token);
-    //     console.log(companyId);
-        
-    //     setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
-    //     alert("Successfully applied to the job!");
-    //   } catch (error) {
-    //     console.error("Error applying for job:", error);
-    //     alert("Failed to apply for the job.");
-    //   }
-    // };
-
-
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({
@@ -111,16 +91,6 @@ export default function Hero() {
     }));
   };
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-  // const handleFilterChange = (filterName) => {
-  //   setFilters((prevFilters) => ({
-  //     ...prevFilters,
-  //     [filterName]: !prevFilters[filterName],
-  //     // [filterName]: value !== undefined ? value : !prevFilters[filterName],
-  //   }));
-  // };
-  
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
     setSearchQuery((prevQuery) => ({
@@ -130,8 +100,6 @@ export default function Hero() {
   };
   
   const applyFilters = () => {
-    // console.log("Job list before filtering:", jobList);
-    // console.log("Current filters---------->", jobList); 
     let filteredJobs = jobList;
     
     // Apply filter conditions
@@ -219,16 +187,18 @@ setJobStats(stats);
   return (
     
     <section className="py-8">
-    <h1 className="text-4xl text-center font-bold mb-8">
-      Find your next <br /> dream job
-    </h1>
+    <div className="main-heading ">
+       <h1 className="text-4xl text-center font-bold">
+         Find your next <br /> dream job
+       </h1>
+    </div>
 
     <div className="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
       <Sidebar filters={filters} onFilterChange={handleFilterChange} />
       <div className="lg:col-span-2">
         {/* Search form */}
         <form onSubmit={handleSearch} className="flex gap-2 mb-6 max-w-md mx-auto">
-            <div className='flex gap-3 items-center border rounded-full p-2'>
+            <div className='flex gap-3 items-center border border-purple-400 rounded-full p-2'>
                <Search />
                <input
                  name="keyword"
@@ -239,7 +209,7 @@ setJobStats(stats);
                  onChange={handleSearchChange}
                  />
             </div>
-            <div className='flex gap-3 items-center border rounded-full p-2'>
+            <div className='flex gap-3 items-center border border-purple-400 rounded-full p-2'>
                 <MapPin />
                 <input
                   name="location"
@@ -260,52 +230,54 @@ setJobStats(stats);
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {jobs.map((job) => {
             const jobId = job.id;
-            console.log(job);
-            
-            // const companyId = job.attributes?.firm?.data?.id; // Extract company ID
-            // console.log("CompanyID---------->", companyId);
-            
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
-            // const companyId = job?.attributes?.firm?.data?.id; // Extract company ID
-            // console.log("CompanyID---------->", companyId);
 
             return (
               
               <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-bold">{job.attributes.title}</h3>
-                <p className="text-gray-700">
-                  {job?.attributes?.firm?.data?.attributes?.name} - {job?.attributes?.firm?.data?.attributes?.location} - {job.attributes.jobType}
+                <p className="text-purple-700 text-sm font-semibold">{job?.attributes?.firm?.data?.attributes?.name}</p>
+                
+                <p className="inline-flex items-center text-gray-700 space-x-2">
+                  <span className="flex items-center space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                    {'\u00A0'}
+                    {job?.attributes?.firm?.data?.attributes?.location} 
+                  </span>
+                  <span className="flex items-center space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pyramid"><path d="M2.5 16.88a1 1 0 0 1-.32-1.43l9-13.02a1 1 0 0 1 1.64 0l9 13.01a1 1 0 0 1-.32 1.44l-8.51 4.86a2 2 0 0 1-1.98 0Z"/><path d="M12 2v20"/></svg>
+                    {'\u00A0'}
+                    {job.attributes.jobType}
+                  </span>
+                  <span className="flex items-center space-x-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                  {'\u00A0'}
+                  {job.attributes.experience}
+                  </span>
                 </p>
-                <p className='text-gray-700'></p>
-                <p className="text-gray-700">{job.attributes.description}</p>
+
+                {/* <p className="text-gray-700">{job.attributes.description}</p> */}
                 <p className="text-red-500 font-bold">
                   Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
                 </p>
-                <p className="text-gray-700">{job.attributes.salary}</p>
+                <p className="text-gray-700">{job.attributes.salary} $/Year</p>
 
-                {/* <button
+                <Button
                   className={`mt-4 px-4 py-2 rounded ${
                     deadlinePassed || alreadyApplied
-                      ? "bg-gray-400"
-                      : "bg-blue-600 text-white"
-                  }`}
-                  onClick={() => applyForJob(jobId)}
-                  disabled={deadlinePassed || alreadyApplied}
-                >
-                  {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
-                </button> */}
-                <button
-                  className={`mt-4 px-4 py-2 rounded ${
-                    deadlinePassed
-                      ? "bg-gray-400"
-                      : "bg-blue-600 text-white"
+                    ? "bg-gray-400"
+                    : "bg-blue-600 text-white"
                   }`}
                   onClick={() => applyForJob(jobId)}
                   disabled={deadlinePassed}
-                >
-                  { deadlinePassed ? "Deadline Passed" : "Apply Now"}
-                </button>
+                  >
+                  {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
+                </Button>
+                {/* <Button>
+                  
+                </Button> */}
+                
               </div>
             );
           })}
@@ -314,7 +286,40 @@ setJobStats(stats);
     </div>
   </section>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////  
+// {/* <button
+  // className={`mt-4 px-4 py-2 rounded ${
+    // deadlinePassed || alreadyApplied
+      // ? "bg-gray-400"
+      // : "bg-blue-600 text-white"
+  // }`}
+  // onClick={() => applyForJob(jobId)}
+  // disabled={deadlinePassed || alreadyApplied}
+// >
+  // {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
+// </button> */}
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// const applyForJob = async (jobId, companyId) => {
+  //   console.log("companyID----->", companyId);
+      
+    //   if (!user || !token) {
+    //     alert("You must be logged in to apply.");
+    //     return;
+    //   }
+  
+    //   try {
+    //     await GlobalAPI.applyForJob(jobId, companyId, user.id, token);
+    //     console.log(companyId);
+        
+    //     setAppliedJobs([...appliedJobs, jobId]); // Add the job to the list of applied jobs
+    //     alert("Successfully applied to the job!");
+    //   } catch (error) {
+    //     console.error("Error applying for job:", error);
+    //     alert("Failed to apply for the job.");
+    //   }
+    // };
 
 // after applyForJob
 //////////////////////////////////////////////////////////////////////////////////////////////////

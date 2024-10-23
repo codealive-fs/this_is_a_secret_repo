@@ -29,6 +29,7 @@ const updateUserProfile = async (userId, updatedData, token) => {
     const payload = {
       username: updatedData.username,
       email: updatedData.email,
+      contact_number: updatedData.contact_number,
       ...(updatedData.cv && { cv: updatedData.cv }),  // Attach CV ID if present
       ...(updatedData.profile_picture && { photo: updatedData.profile_picture })  // Attach profile picture ID if present
 
@@ -192,7 +193,7 @@ const registerCompany = async (name, address, location, userId, token) => {
   }
 };
 
-const addJob = async (title, salary, expiaryDate, jobType, education, experience, companyId, userId, token) => {
+const addJob = async (title, salary, expiaryDate, jobType, education, experience, description, companyId, userId, token) => {
   try {
 
     // API call to add the job
@@ -204,6 +205,7 @@ const addJob = async (title, salary, expiaryDate, jobType, education, experience
         jobType: jobType,
         education: education,
         experience: experience,
+        description: description,
         author: { id: userId },
         firm: { id: companyId },
       }
@@ -215,7 +217,8 @@ const addJob = async (title, salary, expiaryDate, jobType, education, experience
     });
 
     console.log("Job added successfully:", response);
-    return response.data;
+    // debugger
+    return response?.data;
   } catch (error) {
     console.error("Error adding job:", error);
     throw error;

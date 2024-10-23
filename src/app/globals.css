@@ -64,3 +64,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.main-heading{
+  background-color: aqua;
+  margin-top: -4rem;
+  padding-top: 5rem;
+  padding-bottom: 7rem;
+  /* margin-right: -7rem; */
+  /* margin-left: -7rem; */
+  /* width:100%;   */
+};

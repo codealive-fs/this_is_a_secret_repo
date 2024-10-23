@@ -101,6 +101,13 @@
       "relation": "oneToOne",
       "target": "api::company.company",
       "mappedBy": "owner"
+    },
+    "contact_number": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 15,
+      "regex": "^\\+?[1-9]\\d{1,14}$",
+      "minLength": 11
     }
   }
 }

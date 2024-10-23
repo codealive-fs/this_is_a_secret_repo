@@ -51,7 +51,7 @@ export default function RegisterCompany() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             type="text"
-            placeholder="Location"
+            placeholder="City/State"
           />
           <Button onClick={onRegisterCompany} disabled={loading}>
             {loading ? "Registering..." : "Register Company"}

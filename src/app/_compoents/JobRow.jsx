@@ -14,7 +14,7 @@ export function JobRow({ job }) {
         Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
       </p>
       <p className="text-gray-700">{job.attributes.salary}</p>
-      <Button className="mt-4">Apply Now</Button>
+      {/* <Button className="mt-4">Apply Now</Button> */}
     </div>
   );
 }

@@ -425,7 +425,7 @@ export interface ApiJobJob extends Schema.CollectionType {
     jobType: Attribute.Enumeration<
       ['Full-Time', 'Part-Time', 'Permanent', 'Contractual']
     >;
-    jobDescription: Attribute.Blocks;
+    description: Attribute.Blocks;
     education: Attribute.Enumeration<
       [
         'BSc. 2 Year Associate Degree',
@@ -891,6 +891,12 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToOne',
       'api::company.company'
     >;
+    contact_number: Attribute.String &
+      Attribute.Unique &
+      Attribute.SetMinMaxLength<{
+        minLength: 11;
+        maxLength: 15;
+      }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

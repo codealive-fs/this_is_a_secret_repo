@@ -2,7 +2,6 @@
 // import JobRow from "./JobRow"
 import { useContext } from "react";
 import { JobsContext } from "../_context/JobsContext";
-import { Button } from "@/components/ui/button"
 import { JobRow } from "./JobRow";
 
 export default function Jobs(){
@@ -27,6 +26,7 @@ export default function Jobs(){
                          {/* Loop over jobs and use JobRow */}
                         {jobs.map((job) => (
                           <JobRow key={job.id} job={job} />
+                          // <h1>{job.id}</h1>
                         ))}
                         
                         {/* {jobs.map((job) => (

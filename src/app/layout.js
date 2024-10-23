@@ -7,7 +7,6 @@ import Header from "./_compoents/Header"
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from "./_context/AuthContext";
 import { JobsProvider } from "./_context/JobsContext";
-import { NEXT_CACHE_REVALIDATE_TAG_TOKEN_HEADER } from "next/dist/lib/constants";
 const inter = Inter({ subsets: ["latin"] });
 
 const metadata = {
@@ -53,14 +52,14 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
           <AuthProvider value={{ token, user, setToken, setUser }}>
             <JobsProvider>
-              <div className="md:px-16">
-                  <Header />
-                  {children}
-                  <Toaster />
-                  <footer className="container p-6 text-gray-500">
-                    Job Board &copy; 2024 - All rights reserved
-                  </footer>
-              </div>
+                <div className="md:px-16">
+                    <Header />
+                    {children}
+                    <Toaster />
+                    <footer className="container p-6 text-gray-500">
+                      Job Board &copy; 2024 - All rights reserved
+                    </footer>
+                </div>
             </JobsProvider>
           </AuthProvider>
       </body>

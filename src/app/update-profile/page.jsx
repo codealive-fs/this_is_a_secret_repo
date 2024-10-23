@@ -10,6 +10,7 @@ import { toast } from "sonner";
 export default function UpdateProfile() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [contact_number, setContact_Number] = useState("");
   const [profilePic, setProfilePic] = useState(null); // New state for profile picture
   const [cv, setCV] = useState(null); // New state for CV file
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ export default function UpdateProfile() {
     if (user) {
       setUsername(user.username);
       setEmail(user.email);
+      setContact_Number(user.contact_number);
     }
   }, []);
 
@@ -56,6 +58,7 @@ export default function UpdateProfile() {
         email: email,
         cv: cvFileId,  // Pass CV file ID to update profile
         profile_picture: profilePicId,  // Pass profile picture ID to update profile
+        contact_number: contact_number 
       };
       // Call the API to update user profile
       const updatedUser = await GlobalApi.updateUserProfile(userId, updatedData, token);
@@ -77,6 +80,7 @@ export default function UpdateProfile() {
         <div className="flex flex-col w-full gap-5 mt-7">
           <Input value={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username" />
           <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" />
+          <Input value={contact_number} onChange={(e) => setContact_Number(e.target.value)} type="tel" placeholder="Contact Number" />
           {/*  Profile Picture */}
           <Label htmlFor="picture">Profile Picture</Label>
           <Input id="picture" type="file" accept="image/*" onChange={onProfilePicChange} />
