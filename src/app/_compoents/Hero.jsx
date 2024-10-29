@@ -9,6 +9,8 @@ import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
 import { MapPin, Search, History } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { BlocksContent, BlocksRenderer } from "@strapi/blocks-react-renderer";
+// import BlockRendererClient from "./BlockRendererClient";
 
 export default function Hero() {
   
@@ -233,9 +235,6 @@ setJobStats(stats);
             const jobId = job.id;
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
-            // const jobDescription = job.attributes?.description;
-            // console.log(job);
-            // console.log('jobDescription--------------->', jobDescription);
 
             return (
               <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
@@ -285,14 +284,7 @@ setJobStats(stats);
                       <DialogHeader>
                         <DialogTitle>Job's Description</DialogTitle>
                         <DialogDescription className={'text-xs overflow-auto'}>
-                           {/* {job.attributes.description} */}
-                           {/* {jobDescription?.map((paragraph, index) => (
-                               <p key={index}>
-                                   {paragraph?.children.map((child, childIndex) => (
-                                     <span key={childIndex}>{child.text}</span>
-                                 ))}
-                               </p>
-                             ))} */}
+                           <BlocksRenderer content={job?.attributes?.description}/>
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter className="sm:justify-start">
