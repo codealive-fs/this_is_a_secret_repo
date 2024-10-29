@@ -75,7 +75,7 @@ const getUserCompany = async (userId, token) => {
 
     setLoading(true);
     try {
-      const formattedDescription = formatDescription(description); // Format the description text
+      // const formattedDescription = formatDescription(description); // Format the description text
       const result = await GlobalApi.addJob(
         title,
         Number(salary),
@@ -83,9 +83,9 @@ const getUserCompany = async (userId, token) => {
         jobType,
         education,
         experience,
-        Array(formattedDescription),
-        companyId,
+        formatDescription(description),
         userId,
+        companyId,
         token
       );
       // debugger

@@ -425,7 +425,6 @@ export interface ApiJobJob extends Schema.CollectionType {
     jobType: Attribute.Enumeration<
       ['Full-Time', 'Part-Time', 'Permanent', 'Contractual']
     >;
-    description: Attribute.Blocks;
     education: Attribute.Enumeration<
       [
         'BSc. 2 Year Associate Degree',
@@ -455,6 +454,7 @@ export interface ApiJobJob extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    description: Attribute.Blocks;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -14,7 +14,6 @@ function CreateAccount() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const router = useRouter();
-
     
     useEffect(() => {
         const jwt = localStorage.getItem('jwt');
@@ -30,6 +29,7 @@ function CreateAccount() {
             console.log(resp?.data?.jwt);
             localStorage.setItem("user", JSON.stringify(resp?.data?.user))
             localStorage.setItem("jwt", resp?.data?.jwt);
+            
             toast("Account created Successfully!");
 
             router.push('/');        

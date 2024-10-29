@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import Image from "next/image";
-import { UsersRound, Pencil } from 'lucide-react';
-
+import { Textarea } from "@/components/ui/textarea";
+import { useAuthContext } from "../_context/AuthContext";
 
 const jobTypes = ["Full-Time", "Part-Time", "Permanent", "Contractual"];
 const educationTypes = [
@@ -36,13 +36,15 @@ function AddedJobs() {
     expiaryDate: '',
     jobType: '',
     education: '',
-    experience: ''
+    experience: '',
+    description: [],
   });
   const [loading, setLoading] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("jwt");
+  // const user = JSON.parse(localStorage.getItem("user"));
+  // const token = localStorage.getItem("jwt");
 
+  const {user, token} = useAuthContext();
 
   useEffect(() => {
     const getPostedJobs = async () => {
@@ -102,7 +104,8 @@ const handleEditClick = (job) => {
     expiaryDate: job.expiaryDate,
     jobType: job.jobType,
     education: job.education,
-    experience: job.experience
+    experience: job.experience,
+    description: job.description,
   });
 };
 
@@ -121,6 +124,14 @@ const handleSelectChange = (name, value) => {
   });
 };
 
+const handleDescriptionChange = (e) => {
+  const lines = e.target.value.split('\n').map((line, index) => ({
+    id: index,
+    text: line.trim(),
+  }));
+  setFormData({ ...formData, description: lines });
+};
+
 const handleUpdateJob = async () => {
   if (editingJob && token && userCompanyId) {
     setLoading(true);
@@ -133,7 +144,8 @@ const handleUpdateJob = async () => {
         formData.jobType, 
         formData.education, 
         formData.experience, 
-        userCompanyId, 
+        userCompanyId,
+        formData.description, 
         user.id, 
         token
       );
@@ -176,7 +188,7 @@ const handleUpdateJob = async () => {
                           <DialogTitle>Edit Job</DialogTitle>
                           <DialogDescription>Update the job details below.</DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={(e) => { e.preventDefault(); handleUpdateJob(); }}>
+                        <form onSubmit={(e) => { e.preventDefault(); handleUpdateJob(); }} className="overflow-scroll">
                           <div className="space-y-2">
                             <Label htmlFor="title">Job Title</Label>
                             <Input id="title" name="title" value={formData.title} onChange={handleInputChange} required />
@@ -228,6 +240,17 @@ const handleUpdateJob = async () => {
                               </SelectContent>
                             </Select>
                           </div>
+                          <div>
+                          <Label htmlFor="description">Job Description</Label>
+                    {/* ------------------------------------------TEXT------------------------------------------------ */}
+                          <Textarea
+                            id="description"
+                            value={formData.description}
+                            onChange={handleDescriptionChange}
+                            placeholder="Enter job description"
+                            required
+                          />
+                          </div>
                           <DialogFooter>
                             <Button type="submit" disabled={loading}>
                               {loading ? 'Updating...' : 'Update Job'}
@@ -275,7 +298,7 @@ const handleUpdateJob = async () => {
                                         unoptimized={true}
                                         width={40}
                                         height={40}
-                                        className="rounded-full"
+                                        className="rounded-full object-cover w-10 h-10"
                                       />
                                     </td>
                                     <td className="px-4 py-2 text-base text-gray-800">
@@ -342,6 +365,11 @@ const handleUpdateJob = async () => {
 }
 
 export default AddedJobs;
+
+
+
+
+
 
 
 

@@ -22,6 +22,8 @@ export default function RootLayout({ children }) {
   
   const setToken = (accesstoken = null) => {
     if (accesstoken) {
+      console.log('faiz');
+      
       setThisToken(accesstoken);
     }
     else setThisToken(false);

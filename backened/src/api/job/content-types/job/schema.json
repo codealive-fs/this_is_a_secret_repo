@@ -36,9 +36,6 @@
         "Contractual"
       ]
     },
-    "description": {
-      "type": "blocks"
-    },
     "education": {
       "type": "enumeration",
       "enum": [
@@ -88,6 +85,9 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "jobs"
+    },
+    "description": {
+      "type": "blocks"
     }
   }
 }

@@ -193,7 +193,7 @@ const registerCompany = async (name, address, location, userId, token) => {
   }
 };
 
-const addJob = async (title, salary, expiaryDate, jobType, education, experience, description, companyId, userId, token) => {
+const addJob = async (title, salary, expiaryDate, jobType, education, experience, description, userId, companyId, token) => {
   try {
 
     // API call to add the job
@@ -240,7 +240,7 @@ const getUserPostedJobs = async (userId, token) => {
   return jobsData;  // Return the jobs data directly
 };
 
-const editJob = async (jobId, title, salary, expiaryDate, jobType, education, experience, companyId, userId, token) => {
+const editJob = async (jobId, title, salary, expiaryDate, jobType, education, experience, description, companyId, userId, token) => {
   try {
     // API call to update the job
     const response = await axiosClient.put(`/jobs/${jobId}`, {
@@ -251,6 +251,7 @@ const editJob = async (jobId, title, salary, expiaryDate, jobType, education, ex
         jobType: jobType,
         education: education,
         experience: experience,
+        description: description,
         author: { id: userId },  // Update author relation
         firm: { id: companyId },  // Update firm relation
       }

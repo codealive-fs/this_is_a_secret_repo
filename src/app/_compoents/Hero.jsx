@@ -8,11 +8,15 @@ import { calculateJobStats } from "../_utils/statsUtils";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
 import { MapPin, Search, History } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 
 export default function Hero() {
   
+  const {user, token} = useAuthContext();  
   // const [jobs, setJobs] = useState(jobList || []);
   const { jobs: jobList, loading } = useContext(JobsContext);
+  // console.log('jobs------------>', jobList);
+  
   // const { user, token } = useAuthContext(); // Get logged-in user and token
   const [jobs, setJobs] = useState(jobList || []);
   const [jobStats, setJobStats] = useState({
@@ -41,9 +45,6 @@ export default function Hero() {
   const [searchQuery, setSearchQuery] = useState({ keyword: "", location: "" });
   const [appliedJobs, setAppliedJobs] = useState([]);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("jwt");
-
       
   useEffect(() => {
     applyFilters();
@@ -64,7 +65,6 @@ export default function Hero() {
     }
   }, [user, token]);
 
-
   const applyForJob = async (jobId) => {
     if (!user || !token) {
       alert("You must be logged in to apply.");
@@ -81,7 +81,7 @@ export default function Hero() {
       alert("Failed to apply for the job.");
     }
   };
-  console.log(appliedJobs);
+ // console.log(appliedJobs);
 
 
   const handleFilterChange = (filterName, value) => {
@@ -183,6 +183,7 @@ setJobStats(stats);
     applyFilters();
     // console.log(filters);
   };
+  console.log('jobs---------->', jobs);
 
   return (
     
@@ -232,9 +233,11 @@ setJobStats(stats);
             const jobId = job.id;
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
+            // const jobDescription = job.attributes?.description;
+            // console.log(job);
+            // console.log('jobDescription--------------->', jobDescription);
 
             return (
-              
               <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-bold">{job.attributes.title}</h3>
                 <p className="text-purple-700 text-sm font-semibold">{job?.attributes?.firm?.data?.attributes?.name}</p>
@@ -263,21 +266,63 @@ setJobStats(stats);
                 </p>
                 <p className="text-gray-700">{job.attributes.salary} $/Year</p>
 
-                <Button
-                  className={`mt-4 px-4 py-2 rounded ${
-                    deadlinePassed || alreadyApplied
-                    ? "bg-gray-400"
-                    : "bg-blue-600 text-white"
-                  }`}
-                  onClick={() => applyForJob(jobId)}
-                  disabled={deadlinePassed}
+                <div className="flex justify-between mt-4">
+                  <Button
+                    className={`px-4 py-2 rounded ${
+                      deadlinePassed || alreadyApplied ? "bg-gray-400" : "bg-blue-600 text-white"
+                    }`}
+                    onClick={() => applyForJob(jobId)}
+                    disabled={deadlinePassed || alreadyApplied}
                   >
-                  {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
-                </Button>
-                {/* <Button>
+                    {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
+                  </Button>
                   
-                </Button> */}
-                
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">Details</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-xl md:max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Job's Description</DialogTitle>
+                        <DialogDescription className={'text-xs overflow-auto'}>
+                           {/* {job.attributes.description} */}
+                           {/* {jobDescription?.map((paragraph, index) => (
+                               <p key={index}>
+                                   {paragraph?.children.map((child, childIndex) => (
+                                     <span key={childIndex}>{child.text}</span>
+                                 ))}
+                               </p>
+                             ))} */}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="sm:justify-start">
+                        <DialogClose asChild>
+                          <Button type="button" variant="secondary">
+                            Close
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                      {/* <div className="flex items-center space-x-2">
+                        <div className="grid flex-1 gap-2">
+                          <Label htmlFor="link" className="sr-only">
+                            Link
+                          </Label>
+                          <Input
+                            id="link"
+                            defaultValue="https://ui.shadcn.com/docs/installation"
+                            readOnly
+                          />
+                        </div>
+                      </div> */}
+
+
+                  {/* <Button className="px-4 py-2 rounded bg-gray-500 text-white">
+                      Details
+                  </Button> */}
+              </div>
               </div>
             );
           })}
@@ -285,6 +330,20 @@ setJobStats(stats);
       </div>
     </div>
   </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////  
 // {/* <button

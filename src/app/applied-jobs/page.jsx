@@ -2,28 +2,31 @@
 
 import { useEffect, useState, useContext } from "react";
 import GlobalAPI from "../_utils/GlobalApi";
-import { AuthContext } from "../_context/AuthContext";
+import { useAuthContext } from "../_context/AuthContext";
+
 
 function AppliedJobs() {
-  const { user, token } = useContext(AuthContext);
+  const {user, token} = useAuthContext();  
+  // const { user, token } = useContext(AuthContext);
   const [appliedJobs, setAppliedJobs] = useState([]);
 
   useEffect(() => {
-    if (user && token) {
-      GlobalAPI.getAppliedJobs(user.id, token)
-        .then((data) => {
-          setAppliedJobs(data.data);
-        })
-        .catch((error) => {
+    const fetchAppliedJobs = async () => {
+      if (user && token) {
+        try {
+          const response = await GlobalAPI.getAppliedJobs(user.id, token);          
+          setAppliedJobs(response.data);
+        } catch (error) {
           console.error("Error fetching applied jobs:", error);
-        });
-    }
-  }, [token]);
+        }
+      }
+    };
+    fetchAppliedJobs();
+  }, [user, token]);
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-semibold mb-6 text-center">Your Applied Jobs</h1>
-
       {appliedJobs.length === 0 ? (
         <div className="text-center text-lg">No applied jobs yet.</div>
       ) : (

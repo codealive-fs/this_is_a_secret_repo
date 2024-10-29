@@ -7,12 +7,14 @@ import { useRouter } from 'next/navigation'
 import GlobalApi from '../../_utils/GlobalApi';
 import { toast } from "sonner"
 import Link from "next/link"
+import { useAuthContext } from '@/app/_context/AuthContext';
 
 function SignIn() {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const router = useRouter();
+  const {setToken, setUser} = useAuthContext();
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -26,6 +28,8 @@ function SignIn() {
       console.log(resp);
       localStorage.setItem("user", JSON.stringify(resp?.data?.user))
       localStorage.setItem("jwt", resp?.data?.jwt);
+      setToken(resp?.data?.jwt);
+      setUser(resp?.data?.user);
       toast("Login Successfully!");
       
       // Dispatch custom event after successful login
