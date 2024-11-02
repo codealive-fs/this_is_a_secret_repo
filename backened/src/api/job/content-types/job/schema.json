@@ -24,9 +24,6 @@
     "expiary_date": {
       "type": "date"
     },
-    "location": {
-      "type": "string"
-    },
     "jobType": {
       "type": "enumeration",
       "enum": [
@@ -87,7 +84,7 @@
       "inversedBy": "jobs"
     },
     "description": {
-      "type": "blocks"
+      "type": "richtext"
     }
   }
 }

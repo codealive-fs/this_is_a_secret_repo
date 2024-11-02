@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useAuthContext } from "../_context/AuthContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";  // Ensure Label is correctly imported
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,8 @@ export default function UpdateProfile() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const {user, token, setUser} = useAuthContext();  
+
   useEffect(() => {
     if (user) {
       setUsername(user.username);
@@ -36,7 +38,6 @@ export default function UpdateProfile() {
       console.log("File---------->", file);
       setProfilePic(file);  // Update the state with the selected profile picture file
     };
-    const token = localStorage.getItem("jwt");
 
   const onUpdateProfile = async () => {
     setLoading(true);
@@ -63,6 +64,8 @@ export default function UpdateProfile() {
       // Call the API to update user profile
       const updatedUser = await GlobalApi.updateUserProfile(userId, updatedData, token);
       localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
       toast("Profile updated successfully!");
       router.push("/");
     } catch (error) {

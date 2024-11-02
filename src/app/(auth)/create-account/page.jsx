@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from "sonner"
 import GlobalApi from '@/app/_utils/GlobalApi';
 import Link from "next/link"
+import { useAuthContext } from '@/app/_context/AuthContext';
 
 function CreateAccount() {
     const [username, setUsername] = useState();
@@ -14,6 +15,7 @@ function CreateAccount() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const router = useRouter();
+    const {setToken, setUser} = useAuthContext();
     
     useEffect(() => {
         const jwt = localStorage.getItem('jwt');
@@ -24,14 +26,11 @@ function CreateAccount() {
 
     const onCreateAccount = () => {
         GlobalApi.registerUser(fullName, username, email, password).then(resp => {
- // Log data object if it exists
-            console.log(resp?.data?.user);  // This may or may not exist based on API response
-            console.log(resp?.data?.jwt);
             localStorage.setItem("user", JSON.stringify(resp?.data?.user))
             localStorage.setItem("jwt", resp?.data?.jwt);
-            
+            setToken(resp?.data?.jwt);
+            setUser(resp?.data?.user);
             toast("Account created Successfully!");
-
             router.push('/');        
         }, (e) => {
             toast("Error while creating your account!")

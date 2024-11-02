@@ -49,6 +49,34 @@ const updateUserProfile = async (userId, updatedData, token) => {
   }
 };
 
+const registerCompany = async (name, address, location, userId, logoId, token) => {
+  try {
+    // API call to register the company
+    const response = await axiosClient.post('/companies', {
+      data: {
+        name: name,
+        address: address,
+        location: location,
+        owner:{
+          id: userId
+        },
+        logo: logoId,
+          // Associate the company with the logged-in user
+      }
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        // 'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log("Company registration successful:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error registering company:", error);
+    throw error;
+  }
+};
+
 const uploadCV = async (file, token) => {
   try {
     const formData = new FormData();
@@ -81,7 +109,6 @@ const uploadProfilePic = async (file, token) => {
         'Content-Type': 'multipart/form-data'
       },
     });
-
     console.log("Profile picture uploaded successfully:", response.data);
     return response.data;  // This will return an array of uploaded files, each with an ID
   } catch (error) {
@@ -158,40 +185,6 @@ const getAppliedJobs = async (userId, token) => {
   }
 };
 
-const registerCompany = async (name, address, location, userId, token) => {
-  try {
-    // Log company data for debugging
-    console.log("Company Name:", name);
-    console.log("Address:", address);
-    console.log("Location:", location);
-    console.log("User ID:", userId);
-    console.log("Token:", token);
-
-    // API call to register the company
-    const response = await axiosClient.post('/companies', {
-      data: {
-        name: name,
-        address: address,
-        location: location,
-        owner:{
-          id: userId
-        }
-          // Associate the company with the logged-in user
-      }
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        // 'Content-Type': 'multipart/form-data'
-      }
-    });
-
-    console.log("Company registration successful:", response);
-    return response.data;
-  } catch (error) {
-    console.error("Error registering company:", error);
-    throw error;
-  }
-};
 
 const addJob = async (title, salary, expiaryDate, jobType, education, experience, description, userId, companyId, token) => {
   try {

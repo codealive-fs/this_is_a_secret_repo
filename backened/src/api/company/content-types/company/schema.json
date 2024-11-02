@@ -38,6 +38,13 @@
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "company"
+    },
+    "logo": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

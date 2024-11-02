@@ -11,15 +11,10 @@ import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const router = useRouter();
-  const {token, setToken} = useAuthContext();
-  // const { user, logout, token, loading } = useContext(AuthContext);
+  const {token, user, setToken} = useAuthContext();
   
   const [hasCompany, setHasCompany] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  // const user = JSON.parse(sessionStorage.getItem("user"));
-  // console.log("user", user, "token", token);
-  
   useEffect(() => {
     // Check if the logged-in user has a registered company
 
@@ -39,7 +34,7 @@ export default function Header() {
       }
     };
     checkCompany();
-  }, [token]);
+  }, [token, user]);
   
   const logout = () => {
         localStorage.removeItem("user");

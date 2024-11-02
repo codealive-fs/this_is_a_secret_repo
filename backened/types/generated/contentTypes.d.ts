@@ -388,6 +388,7 @@ export interface ApiCompanyCompany extends Schema.CollectionType {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+    logo: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -421,7 +422,6 @@ export interface ApiJobJob extends Schema.CollectionType {
     title: Attribute.String;
     salary: Attribute.Integer & Attribute.DefaultTo<0>;
     expiary_date: Attribute.Date;
-    location: Attribute.String;
     jobType: Attribute.Enumeration<
       ['Full-Time', 'Part-Time', 'Permanent', 'Contractual']
     >;
@@ -454,7 +454,7 @@ export interface ApiJobJob extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    description: Attribute.Blocks;
+    description: Attribute.RichText;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

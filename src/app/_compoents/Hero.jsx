@@ -9,8 +9,7 @@ import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
 import { MapPin, Search, History } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { BlocksContent, BlocksRenderer } from "@strapi/blocks-react-renderer";
-// import BlockRendererClient from "./BlockRendererClient";
+import Markdown from 'react-markdown';
 
 export default function Hero() {
   
@@ -224,36 +223,43 @@ setJobStats(stats);
                   />
             </div>
             </form>
+            {/* <-----------------------------------------Job's Stats-----------------------------------------> */}
         <div className="text-center mb-6">
                 <p>Total Jobs: {jobStats.totalJobs}</p>
                 <p>Average Salary: ${jobStats.averageSalary.toFixed(2)}</p>
                 <p>Min Salary: ${jobStats.minSalary}</p>
                 <p>Max Salary: ${jobStats.maxSalary}</p>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {jobs.map((job) => {
             const jobId = job.id;
             const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
             const alreadyApplied = appliedJobs.includes(jobId);
+            // const jobDescription = marked.parse(job?.attributes?.description);
+            // let styleRishText = jobDescription.replace("<ol>", "<ol type='1'>");
+            // console.log('job markdown description-------->', jobDescription);
+            
 
             return (
               <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
                 <h3 className="text-xl font-bold">{job.attributes.title}</h3>
+                
                 <p className="text-purple-700 text-sm font-semibold">{job?.attributes?.firm?.data?.attributes?.name}</p>
                 
                 <p className="inline-flex items-center text-gray-700 space-x-2">
                   <span className="flex items-center space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
                     {'\u00A0'}
                     {job?.attributes?.firm?.data?.attributes?.location} 
                   </span>
                   <span className="flex items-center space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pyramid"><path d="M2.5 16.88a1 1 0 0 1-.32-1.43l9-13.02a1 1 0 0 1 1.64 0l9 13.01a1 1 0 0 1-.32 1.44l-8.51 4.86a2 2 0 0 1-1.98 0Z"/><path d="M12 2v20"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pyramid"><path d="M2.5 16.88a1 1 0 0 1-.32-1.43l9-13.02a1 1 0 0 1 1.64 0l9 13.01a1 1 0 0 1-.32 1.44l-8.51 4.86a2 2 0 0 1-1.98 0Z"/><path d="M12 2v20"/></svg>
                     {'\u00A0'}
                     {job.attributes.jobType}
                   </span>
                   <span className="flex items-center space-x-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
                   {'\u00A0'}
                   {job.attributes.experience}
                   </span>
@@ -280,11 +286,11 @@ setJobStats(stats);
                     <DialogTrigger asChild>
                       <Button variant="outline">Details</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl md:max-w-2xl">
+                    <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-auto">
                       <DialogHeader>
                         <DialogTitle>Job's Description</DialogTitle>
-                        <DialogDescription className={'text-xs overflow-auto'}>
-                           <BlocksRenderer content={job?.attributes?.description}/>
+                        <DialogDescription className={'text-xs'}>
+                           <Markdown>{job.attributes.description}</Markdown>
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter className="sm:justify-start">
@@ -297,18 +303,18 @@ setJobStats(stats);
                     </DialogContent>
                   </Dialog>
 
-                      {/* <div className="flex items-center space-x-2">
-                        <div className="grid flex-1 gap-2">
-                          <Label htmlFor="link" className="sr-only">
-                            Link
-                          </Label>
-                          <Input
-                            id="link"
-                            defaultValue="https://ui.shadcn.com/docs/installation"
-                            readOnly
-                          />
-                        </div>
-                      </div> */}
+                        {/* <div className="flex items-center space-x-2">
+                          <div className="grid flex-1 gap-2">
+                            <Label htmlFor="link" className="sr-only">
+                              Link
+                            </Label>
+                            <Input
+                              id="link"
+                              defaultValue="https://ui.shadcn.com/docs/installation"
+                              readOnly
+                            />
+                          </div>
+                        </div> */}
 
 
                   {/* <Button className="px-4 py-2 rounded bg-gray-500 text-white">
