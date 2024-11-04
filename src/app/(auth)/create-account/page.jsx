@@ -6,13 +6,17 @@ import {useState, useEffect} from "react";
 import { useRouter } from 'next/navigation' 
 import { toast } from "sonner"
 import GlobalApi from '@/app/_utils/GlobalApi';
-import Link from "next/link"
+import Link from "next/link";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { useAuthContext } from '@/app/_context/AuthContext';
 
 function CreateAccount() {
     const [username, setUsername] = useState();
     const [fullName, setFullName] = useState();
+    const [dateOfBirth, setdateOfBirth] = useState("");
     const [email, setEmail] = useState();
+    const [loading, setLoading] = useState(false);
     const [password, setPassword] = useState();
     const router = useRouter();
     const {setToken, setUser} = useAuthContext();
@@ -24,42 +28,110 @@ function CreateAccount() {
                 }
             }, [])
 
-    const onCreateAccount = () => {
-        GlobalApi.registerUser(fullName, username, email, password).then(resp => {
-            localStorage.setItem("user", JSON.stringify(resp?.data?.user))
-            localStorage.setItem("jwt", resp?.data?.jwt);
-            setToken(resp?.data?.jwt);
-            setUser(resp?.data?.user);
-            toast("Account created Successfully!");
-            router.push('/');        
-        }, (e) => {
-            toast("Error while creating your account!")
-        })
-    }
+      // Handle file change for CV
+     const onFileChange = (e) => {
+       setCV(e.target.files[0]);  // Update the state with the selected CV file
+     };
 
+
+     const onCreateAccount = () => {
+      GlobalApi.registerUser(fullName, username, email, dateOfBirth, password).then(resp => {
+          localStorage.setItem("user", JSON.stringify(resp?.data?.user))
+          localStorage.setItem("jwt", resp?.data?.jwt);
+          setToken(resp?.data?.jwt);
+          setUser(resp?.data?.user);
+          toast("Account created Successfully!");
+          router.push('/');        
+      }, (e) => {
+          toast("Error while creating your account!")
+      })
+  }
   return (
-    <div className='flex flex-col align-baseline items-center my-20 justify-center '>
-        <div className=' flex items-center flex-col  bg-slate-100 border border-gray-200 p-10'>
-                <h2 className='font-bold text-4xl mb-3'>Job Board</h2>
-                <h2 className='text-bold text-2xl mb-2'>Create an Account</h2>
-                <h2 className='text-gray-500 text-sm'>Enter your info to Create an account</h2>
-            <div className='flex flex-col w-full gap-5 mt-7'>
-                <Input onChange={(e) => setFullName(e.target.value)} type="text" placeholder="Full Name"/>
-                <Input onChange={(e) => setUsername(e.target.value)} type="text" placeholder='Username' />
-                <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' /> 
-                <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
-                <Button onClick={() => onCreateAccount()} >Submit</Button>
-                <p>Already have an Account? 
-                <Link href={'/sign-in'} className="text-blue-700">
-                    Click here to Sign In
-                </Link>
-                </p>                    
-            </div>
+    <div className="flex items-center justify-center my-20">
+    <Card className="w-[400px]">
+      <CardHeader className="space-y-1">
+        <div className="text-4xl font-bold mb-3">Job Board</div>
+        <CardTitle className="text-2xl">Create an account</CardTitle>
+        <CardDescription>
+          Enter your info to create an account
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="fullName">
+            Full Name <span className="text-red-500">*</span>
+            </Label>
+          <Input
+            id="fullName"
+            type="text"
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
+            required
+          />
         </div>
-</div>
+        <div className="grid gap-2">
+          <Label htmlFor="username">
+            Username <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="username"
+            type="text"
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            required
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="email">
+            Email <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="m@example.com"
+            required
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="dateOfBirth">
+            Date of Birth
+          </Label>
+          <Input
+            id="dateOfBirth"
+            type="date"
+            value= {dateOfBirth}
+            onChange={(e) => setdateOfBirth(e.target.value)}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password">
+            Password <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+      </CardContent>
+      <CardFooter className="flex flex-col gap-4">
+        <Button onClick={onCreateAccount} className="w-full">
+          Create account
+        </Button>
+        <p className="text-sm text-center">
+          Already have an Account?{" "}
+          <Link href="/sign-in" className="text-gray-600">
+            Click here to Sign In
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
+  </div>
   )
 }
 
-export default CreateAccount
+export default CreateAccount;
 
-//disabled={!(username || email || password)

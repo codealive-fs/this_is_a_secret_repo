@@ -5,14 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";  // Ensure Label is correctly imported
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
 import GlobalApi from '@/app/_utils/GlobalApi';  
 import { toast } from "sonner";
 
 export default function UpdateProfile() {
+  const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [contact_number, setContact_Number] = useState("");
   const [profilePic, setProfilePic] = useState(null); // New state for profile picture
+  const [currentProfilePicUrl, setcurrentProfileURLPic] = useState(null);
   const [cv, setCV] = useState(null); // New state for CV file
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -20,12 +23,18 @@ export default function UpdateProfile() {
   const {user, token, setUser} = useAuthContext();  
 
   useEffect(() => {
-    if (user) {
-      setUsername(user.username);
-      setEmail(user.email);
-      setContact_Number(user.contact_number);
+    if (user && token) {
+      GlobalApi.getUserPhoto(user.id, token)
+          .then((response) => {
+            setUsername(response?.username)
+            setEmail(response?.email);
+            setFullName(response?.fullName)
+            setContact_Number(response?.contact_number)
+            setcurrentProfileURLPic(response?.photo?.url); // Set profile picture URL            
+          })
+          .catch((error) => console.error('Error fetching the user', error));
     }
-  }, []);
+  }, [user, token]);
 
   // Handle file change for CV
   const onFileChange = (e) => {
@@ -55,6 +64,7 @@ export default function UpdateProfile() {
         profilePicId = uploadedPic[0]?.id;  // Get the picture ID after upload
       }
       const updatedData = {
+        fullName: fullName,
         username: username,
         email: email,
         cv: cvFileId,  // Pass CV file ID to update profile
@@ -65,7 +75,6 @@ export default function UpdateProfile() {
       const updatedUser = await GlobalApi.updateUserProfile(userId, updatedData, token);
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
-
       toast("Profile updated successfully!");
       router.push("/");
     } catch (error) {
@@ -77,25 +86,89 @@ export default function UpdateProfile() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center my-20">
-      <div className="flex flex-col bg-slate-100 border border-gray-200 p-10">
-        <h2 className="font-bold text-4xl mb-3">Update Profile</h2>
-        <div className="flex flex-col w-full gap-5 mt-7">
-          <Input value={username} onChange={(e) => setUsername(e.target.value)} type="text" placeholder="Username" />
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" />
-          <Input value={contact_number} onChange={(e) => setContact_Number(e.target.value)} type="tel" placeholder="Contact Number" />
-          {/*  Profile Picture */}
-          <Label htmlFor="picture">Profile Picture</Label>
-          <Input id="picture" type="file" accept="image/*" onChange={onProfilePicChange} />
-          {/* CV upload input */}
-          <Label htmlFor="resume">Resume</Label>
-          <Input id="resume" type="file" onChange={onFileChange} accept=".pdf,.doc,.docx" />
-          <Button onClick={onUpdateProfile} disabled={loading}>
-            {loading ? "Updating..." : "Update Profile"}
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
+    <Card className="w-full max-w-md shadow-lg rounded-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl font-semibold text-gray-800">Update Profile</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={(e) => { e.preventDefault(); onUpdateProfile(); }} className="space-y-4">
+          <div>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Enter full name"
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="contact_number">Contact Number</Label>
+            <Input
+              id="contact_number"
+              type="text"
+              value={contact_number}
+              onChange={(e) => setContact_Number(e.target.value)}
+              placeholder="Enter contact number"
+            />
+          </div>
+          <div>
+            <Label htmlFor="profilePic">Profile Picture</Label>
+            {currentProfilePicUrl && (
+              <div className="mb-4">
+                <img
+                  src={currentProfilePicUrl}
+                  alt="Current Profile"
+                  className="w-24 h-24 rounded-full object-cover"
+                />
+              </div>
+            )}
+            <Input
+              id="profilePic"
+              type="file"
+              accept="image/*"
+              onChange={onProfilePicChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="cv">CV Upload</Label>
+            <Input
+              id="cv"
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={onFileChange}
+            />
+          </div>
+          <Button type="submit" className="w-full mt-4" disabled={loading}>
+            {loading ? "Updating Profile..." : "Update Profile"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
   );
 }
 
@@ -108,9 +181,7 @@ export default function UpdateProfile() {
 
 
 
-
-
-//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // "use client";
 // import { useState, useEffect } from "react";
 // import { Input } from "@/components/ui/input";

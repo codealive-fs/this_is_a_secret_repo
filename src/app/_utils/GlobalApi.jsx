@@ -4,16 +4,16 @@ const axiosClient = axios.create({
     baseURL: 'http://localhost:1337/api'
 })
 
-const getJobs = () => axiosClient.get("/jobs?populate=*").then(resp => {
-    // console.log("++++++++++++", resp.data);
+const getJobs = () => axiosClient.get("/jobs?populate[firm][populate]=logo").then(resp => {
     return resp.data;
 });
 
-const registerUser = (fullName, username, email, password) => axiosClient.post('/auth/local/register', {
+const registerUser = (fullName, username, email, dateOfBirth, password) => axiosClient.post('/auth/local/register', {
     fullName: fullName,
     username: username,
     email: email,
-    password: password
+    dateOfBirth: dateOfBirth,
+    password: password,
 });
 
 const signIn = (email, password) => axiosClient.post("/auth/local", {
@@ -27,6 +27,7 @@ const updateUserProfile = async (userId, updatedData, token) => {
   try {
     // Prepare data for updating user profile
     const payload = {
+      fullName: updatedData.fullName,
       username: updatedData.username,
       email: updatedData.email,
       contact_number: updatedData.contact_number,
@@ -157,18 +158,25 @@ const applyForJob = async (jobId, userId, token) => {
   }
 };
 
-  const getUserCompany = async (userId, token) => {
+const getUserCompany = async (userId, token) => {
   const response = await axiosClient.get(`/users/${userId}?populate=company`, {
     
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  // console.log("COMPANY RESPONSE: ", companyResponse)
-  // console.log("getUserCompany========>", response.data);
-  
   return response.data;
 };
+
+const getUserPhoto = async (userId, token) => {
+    const response = await axiosClient.get(`/users/${userId}?populate=photo`, {
+
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  }
 
 const getAppliedJobs = async (userId, token) => {
   try {
@@ -305,6 +313,7 @@ export default{
   updateUserProfile,
   uploadProfilePic,
   registerCompany,
+  getUserPhoto,
   addJob,
   getUserPostedJobs,
   editJob,

@@ -4,9 +4,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from 'next/link';
 import Header from "./_compoents/Header"
+import Footer from "./_compoents/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from "./_context/AuthContext";
 import { JobsProvider } from "./_context/JobsContext";
+
 const inter = Inter({ subsets: ["latin"] });
 
 const metadata = {
@@ -46,8 +48,7 @@ export default function RootLayout({ children }) {
       setUser();
     }
   }, [token])
-  // console.log("Token from sessionStorage:", token); // Log the token here
-  // debugger
+
 
   return (
     <html lang="en">
@@ -58,9 +59,7 @@ export default function RootLayout({ children }) {
                     <Header />
                     {children}
                     <Toaster />
-                    <footer className="container p-6 text-gray-500">
-                      Job Board &copy; 2024 - All rights reserved
-                    </footer>
+                    <Footer />
                 </div>
             </JobsProvider>
           </AuthProvider>

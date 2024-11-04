@@ -897,6 +897,7 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
         minLength: 11;
         maxLength: 15;
       }>;
+    dateOfBirth: Attribute.Date;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

@@ -6,8 +6,10 @@ import { useAuthContext } from "../_context/AuthContext"; // Import AuthContext 
 import { JobsContext } from "../_context/JobsContext";
 import { calculateJobStats } from "../_utils/statsUtils";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import GlobalAPI
-import { MapPin, Search, History } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
+import { MapPin, Pyramid, Search, History } from "lucide-react";
+// import Markdown from 'markdown-to-jsx';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import Markdown from 'react-markdown';
 
@@ -16,9 +18,7 @@ export default function Hero() {
   const {user, token} = useAuthContext();  
   // const [jobs, setJobs] = useState(jobList || []);
   const { jobs: jobList, loading } = useContext(JobsContext);
-  // console.log('jobs------------>', jobList);
-  
-  // const { user, token } = useAuthContext(); // Get logged-in user and token
+
   const [jobs, setJobs] = useState(jobList || []);
   const [jobStats, setJobStats] = useState({
     totalJobs: 0,
@@ -224,119 +224,114 @@ setJobStats(stats);
             </div>
             </form>
             {/* <-----------------------------------------Job's Stats-----------------------------------------> */}
-        <div className="text-center mb-6">
-                <p>Total Jobs: {jobStats.totalJobs}</p>
-                <p>Average Salary: ${jobStats.averageSalary.toFixed(2)}</p>
-                <p>Min Salary: ${jobStats.minSalary}</p>
-                <p>Max Salary: ${jobStats.maxSalary}</p>
-        </div>
-
+            <div className="flex justify-center mb-2">
+              <Card className="w-full max-w-xl p-2 bg-white border border-purple-300 rounded-full">
+                <CardContent className="flex py-1 justify-between items-center text-center gap-6">
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Total no. Jobs</p>
+                    <p className="text-base font-medium text-purple-700">{jobStats.totalJobs}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Average Salary</p>
+                    <p className="text-base font-medium text-purple-700">${jobStats.averageSalary.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Min Salary</p>
+                    <p className="text-base font-medium text-purple-700">${jobStats.minSalary}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Max Salary</p>
+                    <p className="text-base font-medium text-purple-700">${jobStats.maxSalary}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {jobs.map((job) => {
-            const jobId = job.id;
-            const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
-            const alreadyApplied = appliedJobs.includes(jobId);
-            // const jobDescription = marked.parse(job?.attributes?.description);
-            // let styleRishText = jobDescription.replace("<ol>", "<ol type='1'>");
-            // console.log('job markdown description-------->', jobDescription);
+      {jobs.map((job) => { 
+        const jobId = job.id;
+        const deadlinePassed = new Date(job.attributes.expiary_date) < new Date();
+        const alreadyApplied = appliedJobs.includes(jobId);
+        
+        return (
+          <Card key={jobId} className="w-full">
+            <CardHeader>
+              <div className="flex items-center space-x-4 p-2">
+                {/* Logo Container */}
+                <div className="w-16 h-16 border border-gray-200 rounded-sm overflow-hidden bg-gray-50 flex-shrink-0">
+                  <img 
+                    src={job.attributes?.firm.data?.attributes?.logo?.data?.attributes?.url} 
+                    alt="Firm Logo" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Title and Firm Name */}
+                <div className="flex flex-col">
+                  <CardTitle className="text-lg font-medium mb-1 text-gray-800">{job.attributes.title}</CardTitle>
+                  <p className="text-purple-700 text-sm font-semibold">{job?.attributes?.firm?.data?.attributes?.name}</p>
+                </div>
+              </div>
+            </CardHeader>
             
-
-            return (
-              <div key={jobId} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold">{job.attributes.title}</h3>
-                
-                <p className="text-purple-700 text-sm font-semibold">{job?.attributes?.firm?.data?.attributes?.name}</p>
-                
-                <p className="inline-flex items-center text-gray-700 space-x-2">
-                  <span className="flex items-center space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
-                    {'\u00A0'}
-                    {job?.attributes?.firm?.data?.attributes?.location} 
-                  </span>
-                  <span className="flex items-center space-x-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pyramid"><path d="M2.5 16.88a1 1 0 0 1-.32-1.43l9-13.02a1 1 0 0 1 1.64 0l9 13.01a1 1 0 0 1-.32 1.44l-8.51 4.86a2 2 0 0 1-1.98 0Z"/><path d="M12 2v20"/></svg>
-                    {'\u00A0'}
-                    {job.attributes.jobType}
-                  </span>
-                  <span className="flex items-center space-x-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
-                  {'\u00A0'}
+            <CardContent className="space-y-2">
+              <div className="flex flex-wrap gap-4 text-gray-700 text-sm">
+                <span className="flex items-center gap-1">
+                  <MapPin size={15} />
+                  {job?.attributes?.firm?.data?.attributes?.location}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Pyramid size={15} />
+                  {job.attributes.jobType}
+                </span>
+                <span className="flex items-center gap-1">
+                  <History size={15} strokeWidth={2.4} />
                   {job.attributes.experience}
-                  </span>
-                </p>
-
-                {/* <p className="text-gray-700">{job.attributes.description}</p> */}
-                <p className="text-red-500 font-bold">
-                  Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
-                </p>
-                <p className="text-gray-700">{job.attributes.salary} $/Year</p>
-
-                <div className="flex justify-between mt-4">
-                  <Button
-                    className={`px-4 py-2 rounded ${
-                      deadlinePassed || alreadyApplied ? "bg-gray-400" : "bg-blue-600 text-white"
-                    }`}
-                    onClick={() => applyForJob(jobId)}
-                    disabled={deadlinePassed || alreadyApplied}
-                  >
-                    {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
-                  </Button>
-                  
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Details</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-auto">
-                      <DialogHeader>
-                        <DialogTitle>Job's Description</DialogTitle>
-                        <DialogDescription className={'text-xs'}>
-                           <Markdown>{job.attributes.description}</Markdown>
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter className="sm:justify-start">
-                        <DialogClose asChild>
-                          <Button type="button" variant="secondary">
-                            Close
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-
-                        {/* <div className="flex items-center space-x-2">
-                          <div className="grid flex-1 gap-2">
-                            <Label htmlFor="link" className="sr-only">
-                              Link
-                            </Label>
-                            <Input
-                              id="link"
-                              defaultValue="https://ui.shadcn.com/docs/installation"
-                              readOnly
-                            />
-                          </div>
-                        </div> */}
-
-
-                  {/* <Button className="px-4 py-2 rounded bg-gray-500 text-white">
-                      Details
-                  </Button> */}
+                </span>
               </div>
-              </div>
-            );
-          })}
-        </div>
+
+              <p className="text-red-500 font-bold">
+                Deadline: {new Date(job.attributes.expiary_date).toLocaleDateString()}
+              </p>
+              <p className="text-gray-700">{job.attributes.salary} $/Year</p>
+            </CardContent>
+
+            <CardFooter className="flex justify-between">
+              <Button
+                className={deadlinePassed || alreadyApplied ? "bg-gray-400" : "bg-purple-700 hover:bg-purple-600"}
+                onClick={() => applyForJob(jobId)}
+                disabled={deadlinePassed || alreadyApplied}
+              >
+                {alreadyApplied ? "Applied" : deadlinePassed ? "Deadline Passed" : "Apply Now"}
+              </Button>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="border-purple-700 hover:bg-purple-100">Details</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-auto">
+                  <DialogHeader>
+                    <DialogTitle>Job's Description</DialogTitle>
+                    <DialogDescription className="text-xs overflow-auto">
+                      <Markdown>{job.attributes.description}</Markdown>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="sm:justify-start">
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">
+                        Close
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </CardFooter>
+          </Card>
+        );
+      })}
+    </div>
       </div>
     </div>
   </section>
-
-
-
-
-
-
-
-
-
 
 
 

@@ -108,6 +108,9 @@
       "maxLength": 15,
       "regex": "^\\+?[1-9]\\d{1,14}$",
       "minLength": 11
+    },
+    "dateOfBirth": {
+      "type": "date"
     }
   }
 }

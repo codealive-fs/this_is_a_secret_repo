@@ -61,7 +61,7 @@ export default function Header() {
             </Link>
           ) : (
             <>
-              <h1>Welcome, {user.username ? user.username : "User"}!</h1>
+              <h1>Welcome, {user?.username ? user.username : "User"}!</h1>
               <Link href="/update-profile" className="font-medium hover:text-gray-400">Update Profile</Link>
               <Link href="/applied-jobs" className="font-medium hover:text-gray-400">Applied Jobs</Link>
               {/* Conditionally display the Add Job button */}
