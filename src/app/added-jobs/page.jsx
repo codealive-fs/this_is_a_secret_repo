@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuthContext } from "../_context/AuthContext";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table"
+import TiptapEditor from '../_utils/TiptapEditor'; // Adjust the import path as needed
 
 
 const jobTypes = ["Full-Time", "Part-Time", "Permanent", "Contractual"];
@@ -108,7 +109,7 @@ const handleEditClick = (job) => {
     jobType: job.jobType,
     education: job.education,
     experience: job.experience,
-    description: job.description || '',
+    description: job.description || '<p></p>', // Provide default empty HTML content
   });
 };
 
@@ -249,16 +250,14 @@ const handleUpdateJob = async () => {
                                 </div>
                                 <div>
                                 <Label htmlFor="description">Job Description</Label>
-                               {/*   ------------------------------------------Job's Description------------------------------------------------ */}
-                                <Textarea
-                                  id="description"
-                                  name="description"  // Add name attribute
-                                  value={formData.description}  // Use formData.description instead of description
-                                  onChange={handleInputChange}  // Use the same handleInputChange handler
-                                  // value={description}
-                                  // onChange={(e) => setDescription(e.target.value)}  // Update description state                                  placeholder="Enter job description"
-                                  placeholder="Enter job description"
-                                  required
+                                <TiptapEditor 
+                                  value={formData.description}
+                                  onChange={(newContent) => {
+                                    setFormData(prev => ({
+                                      ...prev,
+                                      description: newContent
+                                    }));
+                                  }}
                                 />
                                 </div>
                                 <DialogFooter>

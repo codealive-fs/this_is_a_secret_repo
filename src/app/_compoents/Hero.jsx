@@ -311,7 +311,7 @@ setJobStats(stats);
                 <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-auto">
                   <DialogHeader>
                     <DialogTitle>Job's Description</DialogTitle>
-                    <DialogDescription className="text-xs overflow-auto">
+                    <DialogDescription className=" overflow-auto">
                       <Markdown>{job.attributes.description}</Markdown>
                     </DialogDescription>
                   </DialogHeader>
