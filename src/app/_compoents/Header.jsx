@@ -3,10 +3,10 @@
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AuthContext, useAuthContext } from "../_context/AuthContext";
+import { useAuthContext } from "../_context/AuthContext";
 import GlobalAPI from "../_utils/GlobalAPI"; // Import the API functions
 import { useRouter } from 'next/navigation'; 
-
+import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 
 
 export default function Header() {
@@ -16,16 +16,12 @@ export default function Header() {
   const [hasCompany, setHasCompany] = useState(false);
 
   useEffect(() => {
-    // Check if the logged-in user has a registered company
-
     const checkCompany = async () => {
-      // debugger
       if (user && token) {
         try {
           const response = await GlobalAPI.getUserCompany(user.id, token);
-          // console.log("COMPANY-------->", company.id);
           const companyResponse = response.company.id;
-          
+          // console.log("COMPANY-------->", company.id);
           setHasCompany(!!companyResponse); // Set true if company exists, false otherwise
           
         } catch (error) {
@@ -35,12 +31,14 @@ export default function Header() {
     };
     checkCompany();
   }, [token, user]);
-  
+  console.log('user->>>>>>>>>>>>>>>>>>>>>>>>>', user );
+ 
   const logout = () => {
-        localStorage.removeItem("user");
-        localStorage.removeItem("jwt");
+        Cookies.remove("jwt"); // Remove token from cookies
+        Cookies.remove("user"); // Optional: remove user data if you stored it in cookies
         // setUser(null);
         setToken(null);
+        setHasCompany(false);
         // Redirect to login page after logging out
         router.push("/sign-in");
       };

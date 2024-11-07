@@ -8,6 +8,7 @@ import Footer from "./_compoents/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from "./_context/AuthContext";
 import { JobsProvider } from "./_context/JobsContext";
+import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,31 +25,36 @@ export default function RootLayout({ children }) {
   
   const setToken = (accesstoken = null) => {
     if (accesstoken) {
-      console.log('faiz');
-      
       setThisToken(accesstoken);
+      Cookies.set('jwt', accesstoken); // Set token in cookies
+    } else {
+      setThisToken(null);
+      Cookies.remove('jwt'); // Remove token from cookies
     }
-    else setThisToken(false);
-  }
-  const setUser = () => {
-    const isUser = JSON.parse(localStorage.getItem("user"));
-    if (isUser) setThisUser(isUser)
-      else setThisUser(null)
-  }
+  };
+
+  const setUser = (userData = null) => {
+    if (userData) {
+      setThisUser(userData);
+      Cookies.set('user', JSON.stringify(userData)); // Store user data in cookies
+    } else {
+      setThisUser(null);
+      Cookies.remove('user'); // Remove user data from cookies
+    }
+  };
   
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      setToken(jwt)
-      setUser();
-    }
-    else {
-      console.log("No token found");
-      setToken(null);
-      setUser();
-    }
-  }, [token])
+    const jwt = Cookies.get('jwt'); // Get token from cookies
+    const userData = Cookies.get('user') ? JSON.parse(Cookies.get('user')) : null; // Get user data from cookies
 
+    if (jwt) {
+      setThisToken(jwt);
+      setThisUser(userData);
+    } else {
+      setThisToken(null);
+      setThisUser(null);
+    }
+  }, []);
 
   return (
     <html lang="en">

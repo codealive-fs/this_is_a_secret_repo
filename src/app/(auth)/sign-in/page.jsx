@@ -8,6 +8,7 @@ import GlobalApi from '../../_utils/GlobalApi';
 import { toast } from "sonner"
 import Link from "next/link"
 import { useAuthContext } from '@/app/_context/AuthContext';
+import Cookies from 'js-cookie';  // Import js-cookie
 
 function SignIn() {
 
@@ -17,7 +18,7 @@ function SignIn() {
   const {setToken, setUser} = useAuthContext();
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
+    const jwt = Cookies.get('jwt');
     if(jwt){
       router.push('/')
     }
@@ -26,12 +27,12 @@ function SignIn() {
   const onSignIn = () => {
     GlobalApi.signIn(email, password).then(resp => {
       console.log(resp);
-      localStorage.setItem("user", JSON.stringify(resp?.data?.user))
-      localStorage.setItem("jwt", resp?.data?.jwt);
+      Cookies.set("jwt", resp?.data?.jwt, { expires: 7 });  // Save token in cookie with a 7-day expiration
+      Cookies.set("user", JSON.stringify(resp?.data?.user), { expires: 7 });
       setToken(resp?.data?.jwt);
       setUser(resp?.data?.user);
       toast("Login Successfully!");
-      
+
       // Dispatch custom event after successful login
       const event = new Event('loginSuccess');
       window.dispatchEvent(event);

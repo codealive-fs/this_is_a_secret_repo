@@ -1,6 +1,8 @@
 
 export const calculateJobStats = (filteredJobs) => {
-    const totalJobs = filteredJobs.length;
+    const totalJobs = filteredJobs?.length;
+    // console.log(totalJobs);
+    
     if (totalJobs === 0) {
       return {
         totalJobs: 0,

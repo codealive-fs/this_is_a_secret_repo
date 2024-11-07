@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import GlobalApi from '@/app/_utils/GlobalApi';  
+import Cookies from 'js-cookie'; 
 
 export default function RegisterCompany() {
   const [name, setName] = useState("");
@@ -16,7 +17,6 @@ export default function RegisterCompany() {
   const [location, setLocation] = useState("");
   const [logo, setLogo] = useState(null); // New state for profile picture
   const [loading, setLoading] = useState(false);
-
   const router = useRouter();
   const {user, token, setUser} = useAuthContext();  
 
@@ -50,7 +50,8 @@ export default function RegisterCompany() {
         ...user,
         company: companyData.data // Assuming the company data is nested under 'data'
       };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      Cookies.set("user", JSON.stringify(updatedUser), { expires: 7 }); // Store user data in cookies for 7 days
+      // Here above I am using localStorage I want to replace with Cookie help me?
       setUser(updatedUser);
       toast("company registered successfully!");
       router.push("/");

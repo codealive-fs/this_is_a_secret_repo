@@ -7,7 +7,6 @@ import { useAuthContext } from "../_context/AuthContext";
 
 function AppliedJobs() {
   const {user, token} = useAuthContext();  
-  // const { user, token } = useContext(AuthContext);
   const [appliedJobs, setAppliedJobs] = useState([]);
 
   useEffect(() => {

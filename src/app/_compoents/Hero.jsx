@@ -172,7 +172,7 @@ if (filters.maxSalary) {
 }
 // console.log("Filtered jobs:", filteredJobs); // Log filtered jobs
 setJobs(filteredJobs);
-console.log("---------------->", filteredJobs);
+// console.log("---------------->", filteredJobs);
 
 
 const stats = calculateJobStats(filteredJobs);
@@ -184,7 +184,7 @@ setJobStats(stats);
     applyFilters();
     // console.log(filters);
   };
-  console.log('jobs---------->', jobs);
+  // console.log('jobs---------->', jobs);
 
   return (
     

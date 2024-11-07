@@ -43,7 +43,7 @@ export default function AddJob() {
     if (user && token) {
       getUserCompany(user?.id, token);
     } else {
-      console.error("User or token not found in localStorage");
+      console.error("User or token not found in cookies");
     }
  });
 

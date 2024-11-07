@@ -32,7 +32,7 @@ function AddedJobs() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [appliedUsers, setAppliedUsers] = useState([]); // State to hold the applied users
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
-  const [description, setDescription] = useState(""); 
+  // const [description, setDescription] = useState(""); 
   const [formData, setFormData] = useState({
     title: '',
     salary: '',
@@ -45,7 +45,6 @@ function AddedJobs() {
   const [loading, setLoading] = useState(false);
 
   const {user, token} = useAuthContext();
-  // console.log('user', 'token', user, token);
   
 
   useEffect(() => {
@@ -85,8 +84,6 @@ function AddedJobs() {
 
 
 const confirmDelete = async () => {
-  // console.log('token', 'selectedJob', token);
-  
   if (selectedJob && token) {
     try {
       await GlobalAPI.deleteJob(selectedJob.id, token);
@@ -101,13 +98,6 @@ const confirmDelete = async () => {
   }
 };
 
-  // Format description back to structured format when saving
-  const formatDescription = (text) => {
-    return text.split("\n").map((paragraph) => ({
-      type: "paragraph",
-      children: [{ text: paragraph, type: "text" }]
-    }));
-  };
 
 const handleEditClick = (job) => {
   setEditingJob(job.id); // Set the current job being edited
@@ -118,7 +108,7 @@ const handleEditClick = (job) => {
     jobType: job.jobType,
     education: job.education,
     experience: job.experience,
-    description: description,
+    description: job.description || '',
   });
 };
 
@@ -141,10 +131,10 @@ const handleSelectChange = (name, value) => {
 const handleUpdateJob = async () => {
   if (editingJob && token && userCompanyId) {
     setLoading(true);
-    // Format description for saving
-    // const formattedDescription = formatDescription(formData.description);
-
+    console.log("Form Data Before Update:", formData); // Add this line to verify form data
     try {
+      console.log("Submitting form data:", formData); // Add this to debug
+
       await GlobalAPI.editJob(
         editingJob, 
         formData.title, 
@@ -153,8 +143,8 @@ const handleUpdateJob = async () => {
         formData.jobType, 
         formData.education, 
         formData.experience, 
-        userCompanyId,
         formData.description, 
+        userCompanyId,
         user.id, 
         token
       );
@@ -162,7 +152,7 @@ const handleUpdateJob = async () => {
        // Update the displayed job list after successful edit
        setPostedJobs((prevJobs) =>
          prevJobs.map((job) =>
-           job.id === editingJob ? { ...job, description: formatDescription } : job
+           job.id === editingJob ? { ...job, ...formData } : job
          )
        );
       setEditingJob(null); // Close the dialog after updating
@@ -259,11 +249,14 @@ const handleUpdateJob = async () => {
                                 </div>
                                 <div>
                                 <Label htmlFor="description">Job Description</Label>
-                               {/    ------------------------------------------Job's Description------------------------------------------------ */}
+                               {/*   ------------------------------------------Job's Description------------------------------------------------ */}
                                 <Textarea
                                   id="description"
-                                  value={description}
-                                  onChange={(e) => setDescription(e.target.value)}  // Update description state                                  placeholder="Enter job description"
+                                  name="description"  // Add name attribute
+                                  value={formData.description}  // Use formData.description instead of description
+                                  onChange={handleInputChange}  // Use the same handleInputChange handler
+                                  // value={description}
+                                  // onChange={(e) => setDescription(e.target.value)}  // Update description state                                  placeholder="Enter job description"
                                   placeholder="Enter job description"
                                   required
                                 />
@@ -357,10 +350,7 @@ const handleUpdateJob = async () => {
                     {/* ------------------------------DELETE BUTTON (Alert)------------------------------ */}
                        <button onClick={() => handleDeleteClick(job)} >
                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" color="#9b0014" fill="none">
-                           <path d="M19.5 5.5L18.8803 15.5251C18.7219 18.0864 18.6428 19.3671 18.0008 20.2879C17.6833 20.7431 17.2747 21.1273 16.8007 21.416C15.8421 22 14.559 22 11.9927 22C9.42312 22 8.1383 22 7.17905 21.4149C6.7048 21.1257 6.296 20.7408 5.97868 20.2848C5.33688 19.3626 5.25945 18.0801 5.10461 15.5152L4.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                           <path d="M3 5.5H21M16.0557 5.5L15.3731 4.09173C14.9196 3.15626 14.6928 2.68852 14.3017 2.39681C14.215 2.3321 14.1231 2.27454 14.027 2.2247C13.5939 2 13.0741 2 12.0345 2C10.9688 2 10.436 2 9.99568 2.23412C9.8981 2.28601 9.80498 2.3459 9.71729 2.41317C9.32164 2.7167 9.10063 3.20155 8.65861 4.17126L8.05292 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                           <path d="M9.5 16.5L9.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                           <path d="M14.5 16.5L14.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                           <path d="M19.5 5.5L18.8803 15.5251C18.7219 18.0864 18.6428 19.3671 18.0008 20.2879C17.6833 20.7431 17.2747 21.1273 16.8007 21.416C15.8421 22 14.559 22 11.9927 22C9.42312 22 8.1383 22 7.17905 21.4149C6.7048 21.1257 6.296 20.7408 5.97868 20.2848C5.33688 19.3626 5.25945 18.0801 5.10461 15.5152L4.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> <path d="M3 5.5H21M16.0557 5.5L15.3731 4.09173C14.9196 3.15626 14.6928 2.68852 14.3017 2.39681C14.215 2.3321 14.1231 2.27454 14.027 2.2247C13.5939 2 13.0741 2 12.0345 2C10.9688 2 10.436 2 9.99568 2.23412C9.8981 2.28601 9.80498 2.3459 9.71729 2.41317C9.32164 2.7167 9.10063 3.20155 8.65861 4.17126L8.05292 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> <path d="M9.5 16.5L9.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> <path d="M14.5 16.5L14.5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                        </svg>
                        </button>
 

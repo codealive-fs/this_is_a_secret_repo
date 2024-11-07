@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { useAuthContext } from '@/app/_context/AuthContext';
+import Cookies from "js-cookie"; // Import js-cookie for handling cookies
 
 function CreateAccount() {
     const [username, setUsername] = useState();
@@ -22,22 +23,22 @@ function CreateAccount() {
     const {setToken, setUser} = useAuthContext();
     
     useEffect(() => {
-        const jwt = localStorage.getItem('jwt');
-            if(jwt){
-                    router.push('/')
-                }
-            }, [])
+      const jwt = Cookies.get("jwt");
+          if(jwt){
+                 router.push('/')
+              }
+          }, [])
 
       // Handle file change for CV
-     const onFileChange = (e) => {
-       setCV(e.target.files[0]);  // Update the state with the selected CV file
-     };
+    //  const onFileChange = (e) => {
+    //    setCV(e.target.files[0]);  // Update the state with the selected CV file
+    //  };
 
 
      const onCreateAccount = () => {
       GlobalApi.registerUser(fullName, username, email, dateOfBirth, password).then(resp => {
-          localStorage.setItem("user", JSON.stringify(resp?.data?.user))
-          localStorage.setItem("jwt", resp?.data?.jwt);
+          Cookies.set("user", JSON.stringify(resp?.data?.user), { expires: 7 }); // Set user data in cookies for 7 days
+          Cookies.set("jwt", resp?.data?.jwt, { expires: 7 }); // Set JWT token in cookies for 7 days
           setToken(resp?.data?.jwt);
           setUser(resp?.data?.user);
           toast("Account created Successfully!");
