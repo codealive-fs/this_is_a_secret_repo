@@ -1,6 +1,6 @@
-import Hero from "@/app/_compoents/Hero"
-import Header from "@/app/_compoents/Header";
-import Jobs from "@/app/_compoents/Jobs"
+import Hero from "@/app/_components/Hero"
+import Header from "@/app/_components/Header";
+import Jobs from "@/app/_components/Jobs"
 import GlobalApi from "./_utils/GlobalApi";
 
 export default function Home() {  

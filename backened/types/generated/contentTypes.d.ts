@@ -455,6 +455,11 @@ export interface ApiJobJob extends Schema.CollectionType {
       'plugin::users-permissions.user'
     >;
     description: Attribute.RichText;
+    job_applications: Attribute.Relation<
+      'api::job.job',
+      'oneToMany',
+      'api::job-application.job-application'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -465,29 +470,41 @@ export interface ApiJobJob extends Schema.CollectionType {
   };
 }
 
-export interface ApiAboutAbout extends Schema.SingleType {
-  collectionName: 'abouts';
+export interface ApiJobApplicationJobApplication extends Schema.CollectionType {
+  collectionName: 'job_applications';
   info: {
-    singularName: 'about';
-    pluralName: 'abouts';
-    displayName: 'about';
+    singularName: 'job-application';
+    pluralName: 'job-applications';
+    displayName: 'job_application';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    aboutus: Attribute.RichText;
+    job: Attribute.Relation<
+      'api::job-application.job-application',
+      'manyToOne',
+      'api::job.job'
+    >;
+    applicant: Attribute.Relation<
+      'api::job-application.job-application',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    status: Attribute.Enumeration<['Pending', 'Rejected', 'Accepted']> &
+      Attribute.DefaultTo<'Pending'>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
-      'api::about.about',
+      'api::job-application.job-application',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private;
     updatedBy: Attribute.Relation<
-      'api::about.about',
+      'api::job-application.job-application',
       'oneToOne',
       'admin::user'
     > &
@@ -928,6 +945,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
         maxLength: 15;
       }>;
     dateOfBirth: Attribute.Date;
+    job_applications: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::job-application.job-application'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -957,7 +979,7 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'api::company.company': ApiCompanyCompany;
       'api::job.job': ApiJobJob;
-      'api::about.about': ApiAboutAbout;
+      'api::job-application.job-application': ApiJobApplicationJobApplication;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::content-releases.release': PluginContentReleasesRelease;

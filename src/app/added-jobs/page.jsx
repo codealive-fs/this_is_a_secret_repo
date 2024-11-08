@@ -66,12 +66,14 @@ function AddedJobs() {
   }, [token]);
 
   const handleViewAppliedUsersClick = async (job) => {
+    console.log(job.id);
+    
     setSelectedJob(job);
     // Fetch the list of applied users for this job                       
     try {
       const response = await GlobalAPI.getAppliedUsers(job.id, token); // Call the API to get applied users
-      const appliedUsers = response?.data?.attributes?.applied_users?.data
-      // console.log("response's Array=======>", appliedUsers);
+      const appliedUsers = response?.data?.attributes?.job_applications?.data;   
+      console.log('appliedUsers---------->', appliedUsers);
       setAppliedUsers(appliedUsers); // Assuming the response contains an array of applied users
     } catch (error) {
       console.error("Error fetching applied users:", error);
@@ -294,6 +296,7 @@ const handleUpdateJob = async () => {
                                            <TableHead className="px-4 py-1 text-gray-800">Email</TableHead>
                                            <TableHead className="px-4 py-1 text-gray-800">Phone</TableHead>
                                            <TableHead className="px-4 py-1 text-gray-800">Resume/CV</TableHead>
+                                           <TableHead className="px-4 py-1 text-gray-800">Status</TableHead>
                                        </TableRow>
                                      </TableHeader>
                                      <TableBody>
@@ -302,7 +305,7 @@ const handleUpdateJob = async () => {
                                              <TableCell className="px-4 py-1">
                                                   <Image
                                                     src={
-                                                   user?.attributes?.photo?.data?.attributes?.url ||
+                                                   user?.attributes?.applicant?.data?.attributes?.photo?.data?.attributes?.url ||
                                                    "/default-profile.png"
                                                  }
                                                  alt={`${user.attributes.fullName || "User"}'s profile picture`}
@@ -313,18 +316,19 @@ const handleUpdateJob = async () => {
                                                />
                                              </TableCell>
                                              <TableCell className="px-4 py-1 text-sm text-gray-800">
-                                               {user.attributes.fullName || "N/A"}
+                                               {user.attributes.applicant.data.attributes.fullName || "N/A"}
                                              </TableCell>
                                              <TableCell className="px-4 py-1 text-gray-600">
-                                               {user.attributes.email || "N/A"}
+                                               {user.attributes.applicant.data.attributes.email || "N/A"}
                                              </TableCell>
                                              <TableCell className="px-4 py-1 text-gray-600">
-                                               {user.attributes.contact_number || "N/A"}
+                                               {user.attributes.applicant.data.attributes.contact_number || "N/A"}
+
                                              </TableCell>
                                              <TableCell className="px-4 py-4 text-gray-600 flex justify-center">
-                                               {user.attributes.cv?.data?.attributes?.url ? (
+                                               {user.attributes.applicant.data.attributes?.url? (
                                                    <a
-                                                     href={user.attributes.cv.data.attributes.url}
+                                                     href={user.attributes.applicant.data.attributes.url}
                                                      download
                                                      className="text-gray-950 hover:text-gray-600 hover:underline hover:transition-all"
                                                      target="_blank" // Opens in a new tab

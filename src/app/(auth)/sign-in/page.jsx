@@ -9,6 +9,8 @@ import { toast } from "sonner"
 import Link from "next/link"
 import { useAuthContext } from '@/app/_context/AuthContext';
 import Cookies from 'js-cookie';  // Import js-cookie
+import AuthLayout from '../layout';
+
 
 function SignIn() {
 
@@ -46,23 +48,24 @@ function SignIn() {
   }
 
   return (
-  <div className='flex flex-col align-baseline items-center my-20 justify-center '>
-      <div className=' flex items-center flex-col  bg-slate-100 border border-gray-200 p-10'>
-              <h2 className='font-bold text-4xl mb-3'>Job Board</h2>
-              <h2 className='text-bold text-2xl mb-2'>Sign In</h2>
-              <h2 className='text-gray-500 text-sm'>Enter your Email and Password to Sign In</h2>
-          <div className='flex flex-col w-full gap-5 mt-7'>
-              <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' />
-              <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
-              <Button onClick={() => onSignIn()} >Sign In</Button>
-              <p>Don't have an Account 
-                <Link href={'/create-account'} className="text-blue-700">
-                    Click here to Create an Account!
-                </Link>
-              </p>
-          </div>
-      </div>
-</div>
+
+        <div className='flex flex-col align-baseline items-center my-20 justify-center '>
+            <div className=' flex items-center flex-col  bg-slate-100 border border-gray-200 p-10'>
+                    <h2 className='font-bold text-4xl mb-3'>Job Board</h2>
+                    <h2 className='text-bold text-2xl mb-2'>Sign In</h2>
+                    <h2 className='text-gray-500 text-sm'>Enter your Email and Password to Sign In</h2>
+                <div className='flex flex-col w-full gap-5 mt-7'>
+                    <Input onChange={(e) => setEmail(e.target.value)} type="email" placeholder='Email' />
+                    <Input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Password' />
+                    <Button onClick={() => onSignIn()} >Sign In</Button>
+                    <p>Don't have an Account 
+                      <Link href={'/create-account'} className="text-blue-700">
+                          Click here to Create an Account!
+                      </Link>
+                    </p>
+                </div>
+            </div>
+        </div>
 )
 }
 

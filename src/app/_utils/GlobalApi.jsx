@@ -118,45 +118,45 @@ const uploadProfilePic = async (file, token) => {
   }
 };
 
-const applyForJob = async (jobId, userId, token) => {
-  try {
-    // Fetch the existing job data (with applied_users populated)
-    const jobResponse = await axiosClient.get(`/jobs/${jobId}?populate=applied_users`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+// const applyForJob = async (jobId, userId, token) => {
+//   try {
+//     // Fetch the existing job data (with applied_users populated)
+//     const jobResponse = await axiosClient.get(`/jobs/${jobId}?populate=applied_users`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
 
-    const jobData = jobResponse.data;
-    // Extract the current applied users
-    const currentAppliedUsers = jobData.data.attributes.applied_users.data;
+//     const jobData = jobResponse.data;
+//     // Extract the current applied users
+//     const currentAppliedUsers = jobData.data.attributes.applied_users.data;
 
-    // Map the applied users to an array of objects with just the ID
-    const updatedAppliedUsers = currentAppliedUsers.map(user => ({ id: user.id }));
+//     // Map the applied users to an array of objects with just the ID
+//     const updatedAppliedUsers = currentAppliedUsers.map(user => ({ id: user.id }));
 
-    // Add the new user to the applied_users array (if not already applied)
-    if (!updatedAppliedUsers.some(user => user.id === userId)) {
-      updatedAppliedUsers.push({ id: userId });
-    }
+//     // Add the new user to the applied_users array (if not already applied)
+//     if (!updatedAppliedUsers.some(user => user.id === userId)) {
+//       updatedAppliedUsers.push({ id: userId });
+//     }
 
-    // Update the job with the new applied_users array
-    const updateResponse = await axiosClient.put(`/jobs/${jobId}`, {
-      data: {
-        applied_users: updatedAppliedUsers,
-      },
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+//     // Update the job with the new applied_users array
+//     const updateResponse = await axiosClient.put(`/jobs/${jobId}`, {
+//       data: {
+//         applied_users: updatedAppliedUsers,
+//       },
+//     }, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
 
-    console.log('Updated job with applied users: ', updateResponse.data);
-    return updateResponse.data;
+//     console.log('Updated job with applied users: ', updateResponse.data);
+//     return updateResponse.data;
 
-  } catch (error) {
-    console.error('Error applying to job: ', error);
-  }
-};
+//   } catch (error) {
+//     console.error('Error applying to job: ', error);
+//   }
+// };
 
 const getUserCompany = async (userId, token) => {
   const response = await axiosClient.get(`/users/${userId}?populate=company`, {
@@ -180,7 +180,7 @@ const getUserPhoto = async (userId, token) => {
 
 const getAppliedJobs = async (userId, token) => {
   try {
-    const response = await axiosClient.get(`/jobs?filters[applied_users][id][$eq]=${userId}&populate=applied_jobs&populate=firm`, {
+    const response = await axiosClient.get(`jobs?populate[0]=job_applications.applicant&populate[1]=firm&filters[job_applications][applicant][id][$eq]=${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -235,7 +235,7 @@ const getUserPostedJobs = async (userId, token) => {
   });
   console.log("getUserJobs Response: ", response.data); // Log full response if needed
   const jobsData = response.data; // Access jobs from the response
-  console.log("Jobs Posted by User: ", jobsData);
+  // console.log("Jobs Posted by User: ", jobsData);
   
   
   return jobsData;  // Return the jobs data directly
@@ -288,15 +288,59 @@ const deleteJob = async (jobId, token) => {
 
 const getAppliedUsers = async (jobId, token) => {
   try {
-    const response = await axiosClient.get(`/jobs/${jobId}?populate[applied_users][populate]=photo,cv`, {
+    const response = await axiosClient.get(`/jobs/${jobId}?populate=job_applications.applicant.cv,job_applications.applicant.photo`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('Users Applied: ', response?.data);
+    // console.log('Users Applied: ', response?.data);
     return response?.data;  // Returns the list of jobs applied to by the user
   } catch (error) {
     console.error('Error fetching applied jobs: ', error);
+    throw error;
+  }
+};
+
+const getJobApplications = async (jobId, token) => {
+  try {
+    const response = await axiosClient.get(`/jobs/${jobId}?populate[job_applications][populate]=applicants,applicants.cv,applicants.photo`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    console.log("Job Applications Data: ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching job applications: ", error);
+    throw error;
+  }
+};
+
+const applyForJob = async (jobId, userId, token) => {
+  try {
+  
+    // Log jobId and userId to check if they are being passed correctly
+    console.log("Job ID:", jobId);
+    console.log("User ID:", userId);
+    console.log("Token:", token);
+  
+    const response = await axiosClient.post('/job-applications', {
+      data: {
+        job: jobId,
+        applicant: userId,
+        status: 'Pending'
+      }
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log("Job application successful:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error applying for job:", error);
     throw error;
   }
 };
@@ -309,7 +353,7 @@ export default{
   uploadCV,
   getAppliedJobs,
   getUserCompany,
-  applyForJob,
+  // applyForJob,
   updateUserProfile,
   uploadProfilePic,
   registerCompany,
@@ -319,6 +363,8 @@ export default{
   editJob,
   deleteJob,
   getAppliedUsers,
+  getJobApplications,
+  applyForJob,
 };
 
 

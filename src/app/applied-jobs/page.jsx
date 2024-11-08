@@ -31,18 +31,17 @@ function AppliedJobs() {
       ) : (
         <ul className="space-y-4">
           {appliedJobs.map((job) => {
-            const jobAttributes = job.attributes;
-            const firmAttributes = jobAttributes?.firm?.data?.attributes;
-
             return (
               <li
                 key={job.id}
                 className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <h3 className="text-xl font-bold">{jobAttributes.title}</h3>
-                <p className="text-gray-700">Salary: {jobAttributes.salary}</p>
-                <p className="text-gray-700">Firm: {firmAttributes?.name}</p>
-                <p className="text-gray-700">Location: {firmAttributes?.location}</p>
+                <h3 className="text-xl font-bold">{job.attributes.title}</h3>
+                <p className="text-gray-700">Salary: {job.attributes?.salary}</p>
+                <p className="text-gray-700">Firm: {job.attributes?.firm?.data?.attributes?.name}</p>
+                <p className="text-gray-700">Location: {job?.attributes?.firm?.data?.attributes?.location}</p>
+                <p className="text-gray-700">Status: {job?.attributes?.job_applications?.data[0]?.attributes?.status}</p>
+
               </li>
             );
           })}

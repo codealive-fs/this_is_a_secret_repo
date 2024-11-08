@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from 'next/link';
-import Header from "./_compoents/Header"
-import Footer from "./_compoents/Footer";
+import Header from "./_components/Header"
+import Footer from "./_components/Footer";
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from "./_context/AuthContext";
 import { JobsProvider } from "./_context/JobsContext";
@@ -63,6 +63,7 @@ export default function RootLayout({ children }) {
             <JobsProvider>
                 <div className="md:px-16">
                     <Header />
+                    {/* If I want to not show this header on specific pages like in {auth} folder. what do i need to do*/}
                     {children}
                     <Toaster />
                     <Footer />
